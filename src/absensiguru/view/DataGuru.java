@@ -1,5 +1,6 @@
 package absensiguru.view;
 
+import absensiguru.model.GuruModel;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIManager;
 
