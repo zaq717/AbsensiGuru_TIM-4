@@ -29,7 +29,7 @@ public class Absensi extends javax.swing.JPanel {
                 txtScan.requestFocusInWindow();
             }
         });
-        new javax.swing.Timer(10000, e -> tampilkanDataHariIni()).start();
+        //new javax.swing.Timer(10000, e -> tampilkanDataHariIni()).start();
     }
 
     public void tampilkanDataHariIni() {
