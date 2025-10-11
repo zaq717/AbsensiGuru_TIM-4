@@ -85,7 +85,7 @@ public class AbsensiDao {
                 status = "Hadir Lengkap";
             }
 
-            String sqlUpdate = "UPDATE absensi SET jam_pulang=CURTIME(), status=? "
+            String sqlUpdate = "UPDATE absensi SET jam_pulang=CURTIME(), status= 'Hadir Lengkap' "
                              + "WHERE id_guru=? AND tanggal=CURDATE()";
             ps = conn.prepareStatement(sqlUpdate);
             ps.setString(1, status);
@@ -98,7 +98,7 @@ public class AbsensiDao {
             String status = waktuSekarang.after(jamMasukIdeal) ? "Terlambat" : "Hadir Tidak Lengkap";
 
             String sqlInsert = "INSERT INTO absensi (id_guru, jam_masuk, status, tanggal) "
-                             + "VALUES (?, CURTIME(), ?, CURDATE())";
+                             + "VALUES (?, CURTIME(), 'Hadir Tidak Lengkap', CURDATE())";
             ps = conn.prepareStatement(sqlInsert);
             ps.setString(1, idGuru);
             ps.setString(2, status);
