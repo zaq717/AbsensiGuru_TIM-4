@@ -133,8 +133,6 @@ public class Absensi extends javax.swing.JPanel {
         });
         tbAbsensi.setViewportView(tblAbsensi);
 
-        txtScan.setEditable(false);
-        txtScan.setForeground(new java.awt.Color(204, 204, 204));
         txtScan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtScanActionPerformed(evt);
@@ -195,12 +193,12 @@ public class Absensi extends javax.swing.JPanel {
     private void txtScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtScanActionPerformed
         // TODO add your handling code here:
         String dataQR = txtScan.getText();
-
+        
     try {
         String idGuru = dao.ambilDariQR(dataQR);
         dao.prosesAbsensi(idGuru);
         tampilkanDataHariIni();
-        JOptionPane.showMessageDialog(this, "Absensi berhasil untuk guru dengan ID: " + idGuru);
+        //JOptionPane.showMessageDialog(this, "Absensi berhasil untuk guru dengan ID: " + idGuru);
     } catch (SQLException ex) {
         JOptionPane.showMessageDialog(this, "Gagal menyimpan absensi: " + ex.getMessage());
     }
