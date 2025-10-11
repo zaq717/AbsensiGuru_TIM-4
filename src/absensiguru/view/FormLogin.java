@@ -112,7 +112,7 @@ public class FormLogin extends javax.swing.JFrame {
 
         pnDasar.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\Downloads\\icons8-student-70.png")); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/icons8-student-70.png"))); // NOI18N
         jLabel1.setText("jLabel1");
 
         btnLogin.setBackground(new java.awt.Color(23, 163, 74));

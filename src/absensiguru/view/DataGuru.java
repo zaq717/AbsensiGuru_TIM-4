@@ -9,6 +9,8 @@ import javax.swing.UIManager;
  */
 public class DataGuru extends javax.swing.JPanel {
 
+
+
     /**
      * Creates new form Dashboard
      */
@@ -229,12 +231,13 @@ public class DataGuru extends javax.swing.JPanel {
         add(pnDasar, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void btnGenerateQRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateQRActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnGenerateQRActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-        // TODO add your handling code here:
+  
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed

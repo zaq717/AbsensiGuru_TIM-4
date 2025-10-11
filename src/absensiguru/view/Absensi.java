@@ -1,6 +1,7 @@
 package absensiguru.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 /**
@@ -19,6 +20,13 @@ public class Absensi extends javax.swing.JPanel {
             System.err.println("FlatLaf Error");
         }
         initComponents();
+//        txtScan.addActionListener(e -> prosesScan());
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                txtScan.requestFocusInWindow();
+            }
+        });
     }
 
     /**
@@ -82,6 +90,13 @@ public class Absensi extends javax.swing.JPanel {
         ));
         tbAbsensi.setViewportView(jTable1);
 
+        txtScan.setEditable(false);
+        txtScan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtScanActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnDasarLayout = new javax.swing.GroupLayout(pnDasar);
         pnDasar.setLayout(pnDasarLayout);
         pnDasarLayout.setHorizontalGroup(
@@ -118,6 +133,10 @@ public class Absensi extends javax.swing.JPanel {
 
         add(pnDasar, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtScanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtScanActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
