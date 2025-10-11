@@ -58,14 +58,9 @@ public class AbsensiDao {
     ps = conn.prepareStatement(sqlGuru);
     ps.setString(1, kodeGuru);
     rs = ps.executeQuery();
-
+    
     if (rs.next()) {
         String idGuru = rs.getString("id_guru");
-
-        java.sql.Time waktuSekarang = new java.sql.Time(System.currentTimeMillis());
-        java.sql.Time jamMasukIdeal = java.sql.Time.valueOf("07:00:00");
-        java.sql.Time jamPulangIdeal = java.sql.Time.valueOf("10:30:00");
-
         // Cek apakah sudah absen hari ini
         String sqlCek = "SELECT * FROM absensi WHERE id_guru=? AND tanggal=CURDATE()";
         ps = conn.prepareStatement(sqlCek);
@@ -75,36 +70,20 @@ public class AbsensiDao {
         if (rsCek.next()) {
             // Sudah absen → update jam pulang
             Time jamMasuk = rsCek.getTime("jam_masuk");
-            String status;
-
-            if (waktuSekarang.before(jamPulangIdeal)) {
-                status = "Pulang Cepat";
-            } else if (jamMasuk.after(jamMasukIdeal)) {
-                status = "Terlambat";
-            } else {
-                status = "Hadir Lengkap";
-            }
-
             String sqlUpdate = "UPDATE absensi SET jam_pulang=CURTIME(), status= 'Hadir Lengkap' "
                              + "WHERE id_guru=? AND tanggal=CURDATE()";
             ps = conn.prepareStatement(sqlUpdate);
-            ps.setString(1, status);
-            ps.setString(2, idGuru);
+            ps.setString(1, idGuru);
             ps.executeUpdate();
-            System.out.println("Absensi pulang disimpan. Status: " + status);
-
+            System.out.println("Absensi pulang disimpan.");
         } else {
             // Belum absen → insert data masuk
-            String status = waktuSekarang.after(jamMasukIdeal) ? "Terlambat" : "Hadir Tidak Lengkap";
-
             String sqlInsert = "INSERT INTO absensi (id_guru, jam_masuk, status, tanggal) "
                              + "VALUES (?, CURTIME(), 'Hadir Tidak Lengkap', CURDATE())";
             ps = conn.prepareStatement(sqlInsert);
             ps.setString(1, idGuru);
-            ps.setString(2, status);
             ps.executeUpdate();
-
-            System.out.println("Absensi masuk disimpan. Status: " + status);
+            System.out.println("Absensi masuk disimpan.");
         }
 
     } else {
