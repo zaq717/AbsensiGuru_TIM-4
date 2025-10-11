@@ -4,10 +4,11 @@
  */
 package absensiguru.dao;
 
+
+
 /**
  *
  * @author HP
  */
 public class GuruDao {
-    
 }

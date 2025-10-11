@@ -8,6 +8,5 @@ package absensiguru.model;
  *
  * @author HP
  */
-public class GuruModel {
-    
+public class GuruModel {    
 }
