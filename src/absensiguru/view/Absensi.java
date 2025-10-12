@@ -39,7 +39,6 @@ public class Absensi extends javax.swing.JPanel {
         try {
             List<AbsensiModel> list = dao.getAbsensiHariIni();
             model = new DefaultTableModel();
-            model.addColumn("ID Absensi");
             model.addColumn("Nama Guru");
             model.addColumn("ID Guru");
             model.addColumn("Tanggal");
@@ -49,7 +48,6 @@ public class Absensi extends javax.swing.JPanel {
 
             for (AbsensiModel ab : list) {
                 model.addRow(new Object[]{
-                    ab.getIdAbsensi(),
                     ab.getNamaGuru(),
                     ab.getIdGuru(),
                     ab.getTanggal(),
@@ -201,11 +199,11 @@ public class Absensi extends javax.swing.JPanel {
         String idGuru = dao.ambilDariQR(dataQR);
         dao.prosesAbsensi(idGuru);
         tampilkanDataHariIni();
-        dao.notifikasi("Absensi berhasil untuk guru dengan ID: " + idGuru,
-                "Informasi", JOptionPane.INFORMATION_MESSAGE,2000);
+        /*dao.notifikasi("Absensi berhasil untuk guru dengan ID: " + idGuru,
+                "Informasi", JOptionPane.INFORMATION_MESSAGE,3000);*/
     } catch (SQLException ex) {
         dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
-                "Peringatan", JOptionPane.INFORMATION_MESSAGE,2000);
+                "Peringatan", JOptionPane.INFORMATION_MESSAGE,3000);
     }
 
     txtScan.setText("");

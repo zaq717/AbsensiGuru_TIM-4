@@ -29,7 +29,8 @@ public class AbsensiDao {
       public List<AbsensiModel> getAbsensiHariIni() throws SQLException {
         List<AbsensiModel> list = new ArrayList<>();
         String sql = "SELECT a.*, g.nama AS nama_guru "
-                + " FROM absensi a JOIN guru g ON a.id_guru = g.id_guru WHERE a.tanggal = CURDATE()";
+                + " FROM absensi a JOIN guru g ON a.id_guru = g.id_guru WHERE a.tanggal = CURDATE()"
+                + "ORDER BY a.tanggal DESC,a.jam_masuk DESC";
 
         try (Connection conn = Koneksi.konek();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -37,7 +38,6 @@ public class AbsensiDao {
 
             while (rs.next()) {
                 AbsensiModel ab = new AbsensiModel();
-                ab.setIdAbsensi(rs.getInt("id_absensi"));
                 ab.setNamaGuru(rs.getString("nama_guru"));
                 ab.setIdGuru(rs.getString("id_guru"));
                 ab.setTanggal(rs.getDate("tanggal"));
@@ -56,7 +56,7 @@ public class AbsensiDao {
     PreparedStatement ps;
     ResultSet rs;
 
-    // 1️⃣ Cek apakah guru terdaftar
+    //mengecek apakah guru sudah terdaftar
     String sqlGuru = "SELECT * FROM guru WHERE id_guru = ?";
     ps = conn.prepareStatement(sqlGuru);
     ps.setString(1, kodeGuru);
@@ -65,7 +65,7 @@ public class AbsensiDao {
     if (rs.next()) {
         String idGuru = rs.getString("id_guru");
 
-        // Waktu acuan
+        // Waktu absen dan jam akhir absen
         java.sql.Time waktuSekarang = new java.sql.Time(System.currentTimeMillis());
         java.sql.Time jamAwalMasuk = java.sql.Time.valueOf("07:00:00");
         java.sql.Time jamAkhirMasuk = java.sql.Time.valueOf("10:29:59");
@@ -80,7 +80,7 @@ public class AbsensiDao {
             return;
         }
 
-        // 2️⃣ Cek apakah guru sudah absen hari ini
+        //cek apakah guru sudah absen hari ini
         String sqlCek = "SELECT * FROM absensi WHERE id_guru=? AND tanggal=CURDATE()";
         ps = conn.prepareStatement(sqlCek);
         ps.setString(1, idGuru);
@@ -91,7 +91,7 @@ public class AbsensiDao {
             Time jamMasuk = rsCek.getTime("jam_masuk");
             Time jamPulang = rsCek.getTime("jam_pulang");
 
-            // 🔒 Cegah absen pulang dua kali
+            //pencegah untuk absen pulang dua kali
             if (jamPulang != null) {
                 notifikasi("Anda sudah absen pulang hari ini! Tidak bisa absen dua kali.",
                         "Peringatan", JOptionPane.WARNING_MESSAGE,3000);
@@ -100,15 +100,15 @@ public class AbsensiDao {
                 return;
             }
 
-            // 🕥 Cegah absen pulang sebelum jam 10:20
+            //pencegah absen pulang sebelum jam 10:20
             if (waktuSekarang.before(jamMulaiPulang)) {
-                notifikasi("Belum waktunya absen pulang! Absen pulang mulai pukul 10:20.",
+                notifikasi("Belum waktunya absen pulang! Absen pulang mulai pukul 10:30.",
                         "Peringatan", JOptionPane.WARNING_MESSAGE,3000);                        
                 conn.close();
                 return;
             }
 
-            // ✅ Jika waktunya sudah cukup → update jam pulang
+            //Jika waktunya jam 10.30 -> update jam pulang
             String sqlUpdate = "UPDATE absensi SET jam_pulang=CURTIME(), status='Hadir Lengkap' "
                     + "WHERE id_guru=? AND tanggal=CURDATE()";
             ps = conn.prepareStatement(sqlUpdate);
@@ -117,17 +117,16 @@ public class AbsensiDao {
 
             notifikasi("Absensi pulang berhasil!",
                     "Berhasil", JOptionPane.INFORMATION_MESSAGE,3000);
-            //System.out.println("Absensi pulang disimpan.");
-
+            
         } else {
-            // Belum absen → lakukan absen masuk
+            //peringatan jika absen masuk lebih dari jadwal
             if (waktuSekarang.after(jamAkhirMasuk)) {
-                notifikasi("Sudah lewat waktu absen masuk! Absen masuk maksimal pukul 10:19.",
+                notifikasi("Sudah lewat waktu absen masuk! Absen masuk maksimal pukul 10:29.",
                         "Peringatan", JOptionPane.WARNING_MESSAGE,3000);                       
                 conn.close();
                 return;
             }
-
+            //jika belum absen -> lakukan absen masuk
             String sqlInsert = "INSERT INTO absensi (id_guru, jam_masuk, status, tanggal) "
                     + "VALUES (?, CURTIME(), 'Hadir Tidak Lengkap', CURDATE())";
             ps = conn.prepareStatement(sqlInsert);
@@ -136,14 +135,13 @@ public class AbsensiDao {
 
             notifikasi("Absensi masuk berhasil!",
                     "Berhasil", JOptionPane.INFORMATION_MESSAGE,3000);
-            //System.out.println("Absensi masuk disimpan.");
-        }
+            }
 
     } else {
+        //jika guru belum terdaftar
         notifikasi("Guru dengan ID " + kodeGuru + " tidak ditemukan!",
                 "Error", JOptionPane.ERROR_MESSAGE,3000);              
-        //throw new SQLException("Guru dengan ID " + kodeGuru + " tidak ditemukan!");
-    }
+}
 
     conn.close();
 }
@@ -160,9 +158,9 @@ public class AbsensiDao {
           return "";
     }   
     public void notifikasi(String pesan,String title, int tipePesan, int timeMills){
-        JOptionPane pane = new JOptionPane(pesan,tipePesan);
+        JOptionPane pane = new JOptionPane(pesan,tipePesan);//
         JDialog dialog = pane.createDialog((java.awt.Component)null,title);
-        //new javax.swing.Timer(timeMills, 3000;
+        //timer untuk pesan
         new javax.swing.Timer(timeMills, e -> dialog.dispose()).start();
         dialog.setVisible(true);
 }

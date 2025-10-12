@@ -12,14 +12,12 @@ import java.util.Date;
  * @author THINKPAD X280
  */
 public class AbsensiModel {
-    private int idAbsensi;
     private String idGuru,namaGuru,status;
     private Date tanggal;
     private Time jamMasuk;
     private Time jamPulang;
 
-    public AbsensiModel(int idAbsensi, String idGuru, String namaGuru, String status, Date tanggal, Time jamMasuk, Time jamPulang) {
-        this.idAbsensi = idAbsensi;
+    public AbsensiModel(String idGuru, String namaGuru, String status, Date tanggal, Time jamMasuk, Time jamPulang) {
         this.idGuru = idGuru;
         this.namaGuru = namaGuru;
         this.status = status;
@@ -31,15 +29,6 @@ public class AbsensiModel {
     public AbsensiModel() {
     }
     
-    
-
-    public int getIdAbsensi() {
-        return idAbsensi;
-    }
-
-    public void setIdAbsensi(int idAbsensi) {
-        this.idAbsensi = idAbsensi;
-    }
 
     public String getIdGuru() {
         return idGuru;
