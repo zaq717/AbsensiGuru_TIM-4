@@ -75,7 +75,7 @@ public class AbsensiDao {
         if (waktuSekarang.before(jamAwalMasuk)) {
             
             notifikasi("Belum waktunya absen! Absen masuk mulai pukul 07:00.",
-                    "Peringatan", JOptionPane.INFORMATION_MESSAGE,3000);
+                    "Peringatan", JOptionPane.INFORMATION_MESSAGE,2000);
             conn.close();
             return;
         }
@@ -94,7 +94,7 @@ public class AbsensiDao {
             //pencegah untuk absen pulang dua kali
             if (jamPulang != null) {
                 notifikasi("Anda sudah absen pulang hari ini! Tidak bisa absen dua kali.",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE,3000);
+                        "Peringatan", JOptionPane.WARNING_MESSAGE,2000);
                         
                 conn.close();
                 return;
@@ -103,7 +103,7 @@ public class AbsensiDao {
             //pencegah absen pulang sebelum jam 10:20
             if (waktuSekarang.before(jamMulaiPulang)) {
                 notifikasi("Belum waktunya absen pulang! Absen pulang mulai pukul 10:30.",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE,3000);                        
+                        "Peringatan", JOptionPane.WARNING_MESSAGE,2000);                        
                 conn.close();
                 return;
             }
@@ -116,13 +116,13 @@ public class AbsensiDao {
             ps.executeUpdate();
 
             notifikasi("Absensi pulang berhasil!",
-                    "Berhasil", JOptionPane.INFORMATION_MESSAGE,3000);
+                    "Berhasil", JOptionPane.INFORMATION_MESSAGE,2000);
             
         } else {
             //peringatan jika absen masuk lebih dari jadwal
             if (waktuSekarang.after(jamAkhirMasuk)) {
                 notifikasi("Sudah lewat waktu absen masuk! Absen masuk maksimal pukul 10:29.",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE,3000);                       
+                        "Peringatan", JOptionPane.WARNING_MESSAGE,2000);                       
                 conn.close();
                 return;
             }
@@ -134,13 +134,13 @@ public class AbsensiDao {
             ps.executeUpdate();
 
             notifikasi("Absensi masuk berhasil!",
-                    "Berhasil", JOptionPane.INFORMATION_MESSAGE,3000);
+                    "Berhasil", JOptionPane.INFORMATION_MESSAGE,2000);
             }
 
     } else {
         //jika guru belum terdaftar
         notifikasi("Guru dengan ID " + kodeGuru + " tidak ditemukan!",
-                "Error", JOptionPane.ERROR_MESSAGE,3000);              
+                "Error", JOptionPane.ERROR_MESSAGE,2000);              
 }
 
     conn.close();

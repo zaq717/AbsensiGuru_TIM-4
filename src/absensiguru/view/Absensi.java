@@ -203,7 +203,7 @@ public class Absensi extends javax.swing.JPanel {
                 "Informasi", JOptionPane.INFORMATION_MESSAGE,3000);*/
     } catch (SQLException ex) {
         dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
-                "Peringatan", JOptionPane.INFORMATION_MESSAGE,3000);
+                "Peringatan", JOptionPane.INFORMATION_MESSAGE,2000);
     }
 
     txtScan.setText("");
