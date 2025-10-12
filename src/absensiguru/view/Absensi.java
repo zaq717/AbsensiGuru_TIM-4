@@ -202,8 +202,7 @@ public class Absensi extends javax.swing.JPanel {
         /*dao.notifikasi("Absensi berhasil untuk guru dengan ID: " + idGuru,
                 "Informasi", JOptionPane.INFORMATION_MESSAGE,3000);*/
     } catch (SQLException ex) {
-        dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
-                "Peringatan", JOptionPane.INFORMATION_MESSAGE,3000);
+        JOptionPane.showMessageDialog(null,"Gagal menyimpan absensi: " + ex.getMessage());
     }
 
     txtScan.setText("");
