@@ -6,6 +6,7 @@ import absensiguru.dao.AbsensiDao;
 import absensiguru.model.AbsensiModel;
 import java.sql.SQLException;
 import java.util.List;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -29,8 +30,10 @@ public class Absensi extends javax.swing.JPanel {
                 txtScan.requestFocusInWindow();
             }
         });
-        //new javax.swing.Timer(10000, e -> tampilkanDataHariIni()).start();
+        //new javax.swing.Timer(10000, e -> tampilkanDataHariIni()).start();        
     }
+    
+   
 
     public void tampilkanDataHariIni() {
         try {
@@ -198,9 +201,11 @@ public class Absensi extends javax.swing.JPanel {
         String idGuru = dao.ambilDariQR(dataQR);
         dao.prosesAbsensi(idGuru);
         tampilkanDataHariIni();
-        //JOptionPane.showMessageDialog(this, "Absensi berhasil untuk guru dengan ID: " + idGuru);
+        dao.notifikasi("Absensi berhasil untuk guru dengan ID: " + idGuru,
+                "Informasi", JOptionPane.INFORMATION_MESSAGE,2000);
     } catch (SQLException ex) {
-        JOptionPane.showMessageDialog(this, "Gagal menyimpan absensi: " + ex.getMessage());
+        dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
+                "Peringatan", JOptionPane.INFORMATION_MESSAGE,2000);
     }
 
     txtScan.setText("");

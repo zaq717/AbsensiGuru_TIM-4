@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Time;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 
@@ -24,6 +25,7 @@ import javax.swing.JOptionPane;
  * @author THINKPAD X280
  */
 public class AbsensiDao {
+     
       public List<AbsensiModel> getAbsensiHariIni() throws SQLException {
         List<AbsensiModel> list = new ArrayList<>();
         String sql = "SELECT a.*, g.nama AS nama_guru "
@@ -66,14 +68,14 @@ public class AbsensiDao {
         // Waktu acuan
         java.sql.Time waktuSekarang = new java.sql.Time(System.currentTimeMillis());
         java.sql.Time jamAwalMasuk = java.sql.Time.valueOf("07:00:00");
-        java.sql.Time jamAkhirMasuk = java.sql.Time.valueOf("10:19:59");
-        java.sql.Time jamMulaiPulang = java.sql.Time.valueOf("10:20:00");
+        java.sql.Time jamAkhirMasuk = java.sql.Time.valueOf("10:29:59");
+        java.sql.Time jamMulaiPulang = java.sql.Time.valueOf("10:30:00");
 
         // Tolak absen sebelum jam 7
         if (waktuSekarang.before(jamAwalMasuk)) {
-            JOptionPane.showMessageDialog(null,
-                    "Belum waktunya absen! Absen masuk mulai pukul 07:00.",
-                    "Peringatan", JOptionPane.WARNING_MESSAGE);
+            
+            notifikasi("Belum waktunya absen! Absen masuk mulai pukul 07:00.",
+                    "Peringatan", JOptionPane.INFORMATION_MESSAGE,3000);
             conn.close();
             return;
         }
@@ -91,18 +93,17 @@ public class AbsensiDao {
 
             // 🔒 Cegah absen pulang dua kali
             if (jamPulang != null) {
-                JOptionPane.showMessageDialog(null,
-                        "Anda sudah absen pulang hari ini! Tidak bisa absen dua kali.",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE);
+                notifikasi("Anda sudah absen pulang hari ini! Tidak bisa absen dua kali.",
+                        "Peringatan", JOptionPane.WARNING_MESSAGE,3000);
+                        
                 conn.close();
                 return;
             }
 
             // 🕥 Cegah absen pulang sebelum jam 10:20
             if (waktuSekarang.before(jamMulaiPulang)) {
-                JOptionPane.showMessageDialog(null,
-                        "Belum waktunya absen pulang! Absen pulang mulai pukul 10:20.",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE);
+                notifikasi("Belum waktunya absen pulang! Absen pulang mulai pukul 10:20.",
+                        "Peringatan", JOptionPane.WARNING_MESSAGE,3000);                        
                 conn.close();
                 return;
             }
@@ -114,17 +115,15 @@ public class AbsensiDao {
             ps.setString(1, idGuru);
             ps.executeUpdate();
 
-            JOptionPane.showMessageDialog(null,
-                    "Absensi pulang berhasil!",
-                    "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+            notifikasi("Absensi pulang berhasil!",
+                    "Berhasil", JOptionPane.INFORMATION_MESSAGE,3000);
             //System.out.println("Absensi pulang disimpan.");
 
         } else {
             // Belum absen → lakukan absen masuk
             if (waktuSekarang.after(jamAkhirMasuk)) {
-                JOptionPane.showMessageDialog(null,
-                        "Sudah lewat waktu absen masuk! Absen masuk maksimal pukul 10:19.",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE);
+                notifikasi("Sudah lewat waktu absen masuk! Absen masuk maksimal pukul 10:19.",
+                        "Peringatan", JOptionPane.WARNING_MESSAGE,3000);                       
                 conn.close();
                 return;
             }
@@ -135,16 +134,14 @@ public class AbsensiDao {
             ps.setString(1, idGuru);
             ps.executeUpdate();
 
-            JOptionPane.showMessageDialog(null,
-                    "Absensi masuk berhasil!",
-                    "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+            notifikasi("Absensi masuk berhasil!",
+                    "Berhasil", JOptionPane.INFORMATION_MESSAGE,3000);
             //System.out.println("Absensi masuk disimpan.");
         }
 
     } else {
-        JOptionPane.showMessageDialog(null,
-                "Guru dengan ID " + kodeGuru + " tidak ditemukan!",
-                "Error", JOptionPane.ERROR_MESSAGE);
+        notifikasi("Guru dengan ID " + kodeGuru + " tidak ditemukan!",
+                "Error", JOptionPane.ERROR_MESSAGE,3000);              
         //throw new SQLException("Guru dengan ID " + kodeGuru + " tidak ditemukan!");
     }
 
@@ -162,4 +159,11 @@ public class AbsensiDao {
         }
           return "";
     }   
+    public void notifikasi(String pesan,String title, int tipePesan, int timeMills){
+        JOptionPane pane = new JOptionPane(pesan,tipePesan);
+        JDialog dialog = pane.createDialog((java.awt.Component)null,title);
+        //new javax.swing.Timer(timeMills, 3000;
+        new javax.swing.Timer(timeMills, e -> dialog.dispose()).start();
+        dialog.setVisible(true);
+}
 }
