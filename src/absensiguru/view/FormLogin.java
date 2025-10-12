@@ -1,5 +1,7 @@
 package absensiguru.view;
 
+import absensiguru.dao.LoginDao;
+import javax.swing.JOptionPane;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
 import java.awt.geom.RoundRectangle2D;
@@ -112,8 +114,7 @@ public class FormLogin extends javax.swing.JFrame {
 
         pnDasar.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\HP\\Downloads\\icons8-student-70.png")); // NOI18N
-        jLabel1.setText("jLabel1");
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/icons8-student-70.png"))); // NOI18N
 
         btnLogin.setBackground(new java.awt.Color(23, 163, 74));
         btnLogin.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -235,10 +236,29 @@ public class FormLogin extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
 
+        String username = tfUsername.getText(); // ambil username dari text field
+        String password = new String(tfPassword.getPassword()); // ambil password
+
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Username dan Password harus diisi!");
+            return;
+        }
+
+        // panggil DAO login
+        LoginDao dao = new LoginDao();
+        boolean loginBerhasil = dao.cekLogin(username, password);
+
+        if (loginBerhasil) {
+            JOptionPane.showMessageDialog(this, "Login berhasil!");
+            new MainMenu().setVisible(true);
+            this.dispose(); // tutup form login
+        } else {
+            JOptionPane.showMessageDialog(this, "Username atau Password salah!");
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void tfPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfPasswordActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:        
     }//GEN-LAST:event_tfPasswordActionPerformed
 
     /**
