@@ -20,6 +20,9 @@ public class FormLogin extends javax.swing.JFrame {
             System.err.println("FlatLaf Error");
         }
         initComponents();
+        tfUsername.addActionListener(e-> tfPassword.requestFocus()); //ketika klik enter maka langsung pindah ke field pw
+        tfPassword.addActionListener(e-> btnLogin.doClick()); //menjalankan semua kode di dalam btnLogin
+        
         setBackground(new Color(0, 0, 0, 0));
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 10, 10));
         tfUsername.putClientProperty("JComponent.roundRect", true);
@@ -128,9 +131,11 @@ public class FormLogin extends javax.swing.JFrame {
         });
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Username");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Password");
 
         tfPassword.addActionListener(new java.awt.event.ActionListener() {
@@ -154,14 +159,12 @@ public class FormLogin extends javax.swing.JFrame {
         pnDasar.setLayout(pnDasarLayout);
         pnDasarLayout.setHorizontalGroup(
             pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnDasarLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDasarLayout.createSequentialGroup()
                 .addContainerGap(19, Short.MAX_VALUE)
                 .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDasarLayout.createSequentialGroup()
                         .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2)
                             .addComponent(btnLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(jLabel3)
                             .addComponent(tfPassword)
                             .addComponent(tfUsername))
                         .addGap(20, 20, 20))
@@ -175,7 +178,13 @@ public class FormLogin extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnDasarLayout.createSequentialGroup()
                         .addGap(93, 93, 93)
-                        .addComponent(jLabel5)))
+                        .addComponent(jLabel5))
+                    .addGroup(pnDasarLayout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addComponent(jLabel2))
+                    .addGroup(pnDasarLayout.createSequentialGroup()
+                        .addGap(118, 118, 118)
+                        .addComponent(jLabel3)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         pnDasarLayout.setVerticalGroup(
@@ -187,9 +196,9 @@ public class FormLogin extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
-                .addGap(14, 14, 14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(8, 8, 8)
                 .addComponent(tfUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
@@ -197,7 +206,7 @@ public class FormLogin extends javax.swing.JFrame {
                 .addComponent(tfPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         getContentPane().add(pnDasar, java.awt.BorderLayout.CENTER);
@@ -249,7 +258,6 @@ public class FormLogin extends javax.swing.JFrame {
         boolean loginBerhasil = dao.cekLogin(username, password);
 
         if (loginBerhasil) {
-            JOptionPane.showMessageDialog(this, "Login berhasil!");
             new MainMenu().setVisible(true);
             this.dispose(); // tutup form login
         } else {
