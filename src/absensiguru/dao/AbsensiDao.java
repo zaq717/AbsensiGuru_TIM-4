@@ -14,9 +14,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Time;
+//import java.sql.Time;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import java.time.LocalTime;
+import java.time.ZoneId;
 
 
 
@@ -56,77 +58,79 @@ public class AbsensiDao {
     PreparedStatement ps;
     ResultSet rs;
 
-    //mengecek apakah guru sudah terdaftar
+    // Mengecek apakah guru terdaftar
     String sqlGuru = "SELECT * FROM guru WHERE id_guru = ?";
     ps = conn.prepareStatement(sqlGuru);
     ps.setString(1, kodeGuru);
     rs = ps.executeQuery();
 
-    if (rs.next()) {
-        String idGuru = rs.getString("id_guru");
+    if (!rs.next()) {
+        notifikasi("Guru dengan ID " + kodeGuru + " tidak ditemukan!",
+                "Error", JOptionPane.ERROR_MESSAGE, 2000);
+        conn.close();
+        return;
+    }
 
-        // Waktu absen dan jam akhir absen
-        java.sql.Time waktuSekarang = new java.sql.Time(System.currentTimeMillis());
-        java.sql.Time jamAwalMasuk = java.sql.Time.valueOf("07:00:00");
-        java.sql.Time jamAkhirMasuk = java.sql.Time.valueOf("10:29:59");
-        java.sql.Time jamMulaiPulang = java.sql.Time.valueOf("10:30:00");
+    String idGuru = rs.getString("id_guru");
 
-        // Tolak absen sebelum jam 7
-        if (waktuSekarang.before(jamAwalMasuk)) {
-            
-            notifikasi("Belum waktunya absen! Absen masuk mulai pukul 07:00.",
-                    "Peringatan", JOptionPane.INFORMATION_MESSAGE,2000);
+    // Tentukan waktu
+    LocalTime waktuSekarang = LocalTime.now(ZoneId.of("Asia/Jakarta"));
+    LocalTime jamAwalMasuk = LocalTime.of(7, 0, 0);
+    LocalTime jamAkhirMasuk = LocalTime.of(22, 59, 0);
+    LocalTime jamMulaiPulang = LocalTime.of(23, 0, 0);
+    
+        System.out.println("DEBUG: Waktu Sekarang" + waktuSekarang);
+
+    // Tolak absen sebelum jam awal
+    if (waktuSekarang.isBefore(jamAwalMasuk)) {
+        notifikasi("Belum waktunya absen! Absen masuk mulai pukul 07:00.",
+                "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
+        conn.close();
+        return;
+    }
+
+    // Cek apakah guru sudah absen hari ini
+    String sqlCek = "SELECT * FROM absensi WHERE id_guru=? AND tanggal=CURDATE()";
+    ps = conn.prepareStatement(sqlCek);
+    ps.setString(1, idGuru);
+    ResultSet rsCek = ps.executeQuery();
+
+    if (rsCek.next()) {
+        //mengonversi waktu dari database (java.sql.Time) ke waktu (LocalTime)
+        java.sql.Time sqljamPulang = rsCek.getTime("jam_pulang");
+        LocalTime jamPulang = (sqljamPulang != null) ? sqljamPulang.toLocalTime() :null;
+        // Sudah absen masuk, cek jam pulang
+        if (jamPulang != null) {
+            notifikasi("Anda sudah absen pulang hari ini!",
+                    "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
             conn.close();
             return;
         }
 
-        //cek apakah guru sudah absen hari ini
-        String sqlCek = "SELECT * FROM absensi WHERE id_guru=? AND tanggal=CURDATE()";
-        ps = conn.prepareStatement(sqlCek);
+        if (waktuSekarang.isBefore(jamMulaiPulang)) {
+            notifikasi("Belum waktunya absen pulang! Mulai pukul 10:30.",
+                    "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
+            conn.close();
+            return;
+        }
+
+        // Update jam pulang
+        String sqlUpdate = "UPDATE absensi SET jam_pulang=CURTIME(), status='Hadir Lengkap' "
+                + "WHERE id_guru=? AND tanggal=CURDATE()";
+        ps = conn.prepareStatement(sqlUpdate);
         ps.setString(1, idGuru);
-        ResultSet rsCek = ps.executeQuery();
+        ps.executeUpdate();
 
-        if (rsCek.next()) {
-            // Sudah absen masuk sebelumnya
-            Time jamMasuk = rsCek.getTime("jam_masuk");
-            Time jamPulang = rsCek.getTime("jam_pulang");
-
-            //pencegah untuk absen pulang dua kali
-            if (jamPulang != null) {
-                notifikasi("Anda sudah absen pulang hari ini! Tidak bisa absen dua kali.",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE,2000);
-                        
-                conn.close();
-                return;
-            }
-
-            //pencegah absen pulang sebelum jam 10:20
-            if (waktuSekarang.before(jamMulaiPulang)) {
-                notifikasi("Belum waktunya absen pulang! Absen pulang mulai pukul 10:30.",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE,2000);                        
-                conn.close();
-                return;
-            }
-
-            //Jika waktunya jam 10.30 -> update jam pulang
-            String sqlUpdate = "UPDATE absensi SET jam_pulang=CURTIME(), status='Hadir Lengkap' "
-                    + "WHERE id_guru=? AND tanggal=CURDATE()";
-            ps = conn.prepareStatement(sqlUpdate);
-            ps.setString(1, idGuru);
-            ps.executeUpdate();
-
-            notifikasi("Absensi pulang berhasil!",
-                    "Berhasil", JOptionPane.INFORMATION_MESSAGE,2000);
+        notifikasi("Absensi pulang berhasil!",
+                "Berhasil", JOptionPane.INFORMATION_MESSAGE, 2000);
+    } else {
+        // Belum absen masuk
+        if (waktuSekarang.isAfter(jamAkhirMasuk)) {
+            notifikasi("Sudah lewat waktu absen masuk! Maksimal pukul 10:29.",
+                    "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
             
         } else {
-            //peringatan jika absen masuk lebih dari jadwal
-            if (waktuSekarang.after(jamAkhirMasuk)) {
-                notifikasi("Sudah lewat waktu absen masuk! Absen masuk maksimal pukul 10:29.",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE,2000);                       
-                conn.close();
-                return;
-            }
-            //jika belum absen -> lakukan absen masuk
+            // Insert data absen masuk
             String sqlInsert = "INSERT INTO absensi (id_guru, jam_masuk, status, tanggal) "
                     + "VALUES (?, CURTIME(), 'Hadir Tidak Lengkap', CURDATE())";
             ps = conn.prepareStatement(sqlInsert);
@@ -134,17 +138,13 @@ public class AbsensiDao {
             ps.executeUpdate();
 
             notifikasi("Absensi masuk berhasil!",
-                    "Berhasil", JOptionPane.INFORMATION_MESSAGE,2000);
-            }
-
-    } else {
-        //jika guru belum terdaftar
-        notifikasi("Guru dengan ID " + kodeGuru + " tidak ditemukan!",
-                "Error", JOptionPane.ERROR_MESSAGE,2000);              
-}
+                    "Berhasil", JOptionPane.INFORMATION_MESSAGE, 2000);
+        }
+    }
 
     conn.close();
 }
+
 
 
     public String ambilDariQR(String dataQR) {
