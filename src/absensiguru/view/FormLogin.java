@@ -138,12 +138,14 @@ public class FormLogin extends javax.swing.JFrame {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Password");
 
+        tfPassword.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         tfPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tfPasswordActionPerformed(evt);
             }
         });
 
+        tfUsername.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         tfUsername.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tfUsernameActionPerformed(evt);
@@ -163,14 +165,17 @@ public class FormLogin extends javax.swing.JFrame {
                 .addContainerGap(19, Short.MAX_VALUE)
                 .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDasarLayout.createSequentialGroup()
-                        .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(tfPassword)
-                            .addComponent(tfUsername))
-                        .addGap(20, 20, 20))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDasarLayout.createSequentialGroup()
                         .addComponent(jLabel4)
-                        .addGap(63, 63, 63))))
+                        .addGap(63, 63, 63))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDasarLayout.createSequentialGroup()
+                        .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btnLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                                .addComponent(tfPassword)
+                                .addComponent(tfUsername))
+                            .addComponent(jLabel3))
+                        .addGap(20, 20, 20))))
             .addGroup(pnDasarLayout.createSequentialGroup()
                 .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnDasarLayout.createSequentialGroup()
@@ -178,13 +183,7 @@ public class FormLogin extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnDasarLayout.createSequentialGroup()
                         .addGap(93, 93, 93)
-                        .addComponent(jLabel5))
-                    .addGroup(pnDasarLayout.createSequentialGroup()
-                        .addGap(116, 116, 116)
-                        .addComponent(jLabel2))
-                    .addGroup(pnDasarLayout.createSequentialGroup()
-                        .addGap(118, 118, 118)
-                        .addComponent(jLabel3)))
+                        .addComponent(jLabel5)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         pnDasarLayout.setVerticalGroup(
@@ -196,9 +195,9 @@ public class FormLogin extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(14, 14, 14)
                 .addComponent(jLabel2)
-                .addGap(8, 8, 8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tfUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
@@ -253,7 +252,7 @@ public class FormLogin extends javax.swing.JFrame {
             return;
         }
 
-        // panggil DAO login
+        // panggil daoLogin
         LoginDao dao = new LoginDao();
         boolean loginBerhasil = dao.cekLogin(username, password);
 

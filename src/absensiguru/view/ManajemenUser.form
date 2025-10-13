@@ -171,6 +171,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="tfUsername">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfUsernameActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="tfPassword">
           <Events>
@@ -275,6 +278,9 @@
                   </Table>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblUserMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

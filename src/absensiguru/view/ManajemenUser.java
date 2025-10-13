@@ -119,6 +119,12 @@ public class ManajemenUser extends javax.swing.JPanel {
         lbPassword.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         lbPassword.setText("Password  :");
 
+        tfUsername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfUsernameActionPerformed(evt);
+            }
+        });
+
         tfPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tfPasswordActionPerformed(evt);
@@ -180,6 +186,11 @@ public class ManajemenUser extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblUser.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblUserMouseClicked(evt);
+            }
+        });
         tbUser.setViewportView(tblUser);
 
         txtID.setForeground(new java.awt.Color(242, 242, 242));
@@ -256,29 +267,31 @@ public class ManajemenUser extends javax.swing.JPanel {
 
         JOptionPane.showMessageDialog(this, "Data berhasil disimpan");
         tampildata();
+        reset();
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
         // TODO add your handling code here:
         int row = tblUser.getSelectedRow();
-    if (row != -1) { 
-        // Mengecek apakah ada baris (row) yang dipilih di tabel. 
-    // Jika tidak ada baris yang dipilih, maka nilainya -1, -1 sebagai penanda bahwa tidak ada baris yang sedang dipilih di tabel JTable.
-        String usernameLama = tblUser.getValueAt(row, 0).toString(); // ambil username lama dari tabel
-        String usernameBaru = tfUsername.getText();
-        String passwordBaru = tfPassword.getText();
+        if (row != -1) {
+            // Mengecek apakah ada baris (row) yang dipilih di tabel. 
+            // Jika tidak ada baris yang dipilih, maka nilainya -1, -1 sebagai penanda bahwa tidak ada baris yang sedang dipilih di tabel JTable.
+            String usernameLama = tblUser.getValueAt(row, 0).toString(); // ambil username lama dari tabel
+            String usernameBaru = tfUsername.getText();
+            String passwordBaru = tfPassword.getText();
 
-        ManajemenModel m = new ManajemenModel();
-        m.setusername(usernameBaru);
-        m.setpassword(passwordBaru);
+            ManajemenModel m = new ManajemenModel();
+            m.setusername(usernameBaru);
+            m.setpassword(passwordBaru);
 
-        ManajemenDao dao = new ManajemenDao();
-        dao.update(m, usernameLama);
-        tampildata();
-        JOptionPane.showMessageDialog(this, "Data berhasil diubah!");
-    } else {
-        JOptionPane.showMessageDialog(this, "Pilih data yang ingin diubah terlebih dahulu!");
-    }
+            ManajemenDao dao = new ManajemenDao();
+            dao.update(m, usernameLama);
+            tampildata();
+            reset();
+            JOptionPane.showMessageDialog(this, "Data berhasil diubah!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Pilih data yang ingin diubah terlebih dahulu!");
+        }
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
@@ -311,11 +324,25 @@ public class ManajemenUser extends javax.swing.JPanel {
 
                 JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
                 tampildata(); // refresh tabel
+                reset();
             }
         } else {
             JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus!");
         }
     }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void tblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUserMouseClicked
+        // TODO add your handling code here:
+        int row = tblUser.getSelectedRow();
+        tfUsername.setText(tblUser.getValueAt(row, 0).toString());
+        tfPassword.setText(tblUser.getValueAt(row, 1).toString());
+
+    }//GEN-LAST:event_tblUserMouseClicked
+
+    private void tfUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfUsernameActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_tfUsernameActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
