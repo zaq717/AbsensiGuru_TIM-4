@@ -3,12 +3,21 @@ package absensiguru.view;
 import absensiguru.model.GuruModel;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIManager;
+import absensiguru.dao.GuruDao;
+import absensiguru.model.GuruModel;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.io.File;
+import java.util.List;
 
 /**
  *
  * @author HP
  */
-public class DataGuru extends javax.swing.JPanel {
+public class DataGuru extends javax.swing.JFrame {
+    
+    GuruDao dao = new GuruDao();
+    DefaultTableModel model;
 
     /**
      * Creates new form Dashboard
@@ -20,6 +29,30 @@ public class DataGuru extends javax.swing.JPanel {
             System.err.println("FlatLaf Error");
         }
         initComponents();
+        loadTable();
+    }
+
+    // 🔹 Menampilkan data guru di tabel
+    private void loadTable() {
+        String[] kolom = {"NIP", "Nama", "Jenis Kelamin", "Alamat"};
+        model = new DefaultTableModel(null, kolom);
+        List<GuruModel> list = dao.getAll();
+        for (GuruModel g : list) {
+            model.addRow(new Object[]{
+                g.getNip(), g.getNama(), g.getJenisKelamin(), g.getAlamat()
+            });
+        }
+        tbDataGuru.setModel(model);
+    }
+
+    // 🔹 Membersihkan form input
+    private void resetForm() {
+        fNip.setText("");
+        fNama.setText("");
+        fAlamat.setText("");
+        cbJeniskel.setSelectedIndex(0);
+        fNip.requestFocus();
+    
     }
 
     /**
@@ -97,6 +130,15 @@ public class DataGuru extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbDataGuru.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                tbDataGuruAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
         jScrollPane1.setViewportView(tbDataGuru);
 
         btnReset.setBackground(new java.awt.Color(0, 150, 253));
@@ -115,6 +157,11 @@ public class DataGuru extends javax.swing.JPanel {
         btnHapus.setForeground(new java.awt.Color(255, 255, 255));
         btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/icons8-delete-20.png"))); // NOI18N
         btnHapus.setText("Hapus");
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
 
         btnUbah.setBackground(new java.awt.Color(252, 152, 52));
         btnUbah.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -236,15 +283,60 @@ public class DataGuru extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
+        GuruModel g =  new GuruModel();
+        g.setNip(fNip.getText());
+        g.setNama(fNama.getText());
+        g.setJenisKelamin(cbJeniskel.getSelectedItem().toString());
+        g.setAlamat(fAlamat.getText());
+        
+        if (g.getNip().isEmpty()|| g.getNama().isEmpty()){
+            JOptionPane.showMessageDialog(this, "NIP dan Nama wajib diisi!");
+            return;
+        }
+        dao.insert(g);
+        JOptionPane.showMessageDialog(this, "Data guru berhasil disimpan!");
+        loadTable();
+        resetForm();
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
         // TODO add your handling code here:
+        GuruModel g =  new GuruModel();
+        g.setNip(fNip.getText());
+        g.setNama(fNama.getText());
+        g.setJenisKelamin(cbJeniskel.getSelectedItem().toString());
+        g.setAlamat(fAlamat.getText());
+        
+        dao.update(g);
+        JOptionPane.showMessageDialog(this, "Data guru berhasil diubah!");
+        loadTable();
+        resetForm();
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
+    resetForm();
     }//GEN-LAST:event_btnResetActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        // TODO add your handling code here:
+        String nip = fNip.getText();
+        if (nip.isEmpty()){
+        JOptionPane.showMessageDialog(this, "Data guru berhasil dihapus!");
+        loadTable();
+        resetForm();
+        }
+    }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void tbDataGuruAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tbDataGuruAncestorAdded
+        // TODO add your handling code here:
+        int baris = tbDataGuru.getSelectedRow();
+        fNip.setText(model.getValueAt(baris, 0).toString());
+        fNama.setText(model.getValueAt(baris, 1).toString());
+        cbJeniskel.setSelectedItem(model.getValueAt(baris, 2).toString());
+        fAlamat.setText(model.getValueAt(baris, 3).toString());
+        
+    }//GEN-LAST:event_tbDataGuruAncestorAdded
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

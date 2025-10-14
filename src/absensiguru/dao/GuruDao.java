@@ -9,17 +9,20 @@ import absensiguru.model.GuruModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 /**
  *
  * @author HP
  */
 public class GuruDao {
     
+    private List<GuruModel> dataGuru = new ArrayList<>();
+    
     public void insert(GuruModel guru){
     String sql = "INSERT INTO guru (nip, nama, jenis_kelamin, alamat) VALUES (?, ?, ? ?)";
         try (Connection conn = Koneksi.konek();
                 PreparedStatement ps = conn.prepareStatement(sql)){
-                 ps.setString(1, guru.getNip());
+                ps.setString(1, guru.getNip());
                 ps.setString(2, guru.getNama());
                 ps.setString(3, guru.getJenisKelamin());
                 ps.setString(4, guru.getAlamat());
