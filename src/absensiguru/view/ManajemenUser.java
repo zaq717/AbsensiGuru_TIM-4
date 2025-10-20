@@ -323,7 +323,7 @@ public class ManajemenUser extends javax.swing.JPanel {
                 dao.delete(m);
 
                 JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
-                tampildata(); // refresh tabel
+                tampildata(); 
                 reset();
             }
         } else {

@@ -258,7 +258,7 @@ public class FormLogin extends javax.swing.JFrame {
 
         if (loginBerhasil) {
             new MainMenu().setVisible(true);
-            this.dispose(); // tutup form login
+            dispose(); // tutup form login
         } else {
             JOptionPane.showMessageDialog(this, "Username atau Password salah!");
         }
