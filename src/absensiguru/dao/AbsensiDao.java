@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-//import java.sql.Time;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import java.time.LocalTime;
