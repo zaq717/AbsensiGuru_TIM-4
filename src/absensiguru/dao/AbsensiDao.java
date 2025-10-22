@@ -6,8 +6,6 @@ package absensiguru.dao;
 
 import absensiguru.helper.Koneksi;
 import absensiguru.model.AbsensiModel;
-import absensiguru.model.GuruModel;
-import com.mysql.cj.protocol.Resultset;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -76,8 +74,8 @@ public class AbsensiDao {
     // Tentukan waktu
     LocalTime waktuSekarang = LocalTime.now(ZoneId.of("Asia/Jakarta"));
     LocalTime jamAwalMasuk = LocalTime.of(7, 0, 0);
-    LocalTime jamAkhirMasuk = LocalTime.of(22, 59, 0);
-    LocalTime jamMulaiPulang = LocalTime.of(23, 0, 0);
+    LocalTime jamAkhirMasuk = LocalTime.of(10, 29, 59);
+    LocalTime jamMulaiPulang = LocalTime.of(10, 30, 0);
     
         System.out.println("DEBUG: Waktu Sekarang" + waktuSekarang);
 
@@ -148,7 +146,6 @@ public class AbsensiDao {
 
 
     public String ambilDariQR(String dataQR) {
-        //contoh QR: "ID:4|Nama:Ahmad"
         String[] parts = dataQR.split("\\|");
         for (String part : parts) {
             if (part.startsWith("ID:")) {

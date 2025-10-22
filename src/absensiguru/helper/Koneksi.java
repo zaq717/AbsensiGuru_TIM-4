@@ -8,7 +8,7 @@ public class Koneksi {
     private static Connection mysqlconfig;
     public static Connection konek(){
         try {
-           String url = "jdbc:mysql://localhost:3306/db_absensi?serverTimezone=Asia/Jakarta";
+           String url = "jdbc:mysql://localhost:3306/db_absensi";
            String user = "root";
            String password = "";
            mysqlconfig = DriverManager.getConnection(url,user,password);

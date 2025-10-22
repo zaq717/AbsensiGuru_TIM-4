@@ -1,13 +1,11 @@
 package absensiguru.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import absensiguru.dao.AbsensiDao;
 import absensiguru.model.AbsensiModel;
 import java.sql.SQLException;
 import java.util.List;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -146,13 +144,6 @@ public class Absensi extends javax.swing.JPanel {
             }
         });
 
-        txtScan.setEditable(false);
-        txtScan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtScanActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout pnDasarLayout = new javax.swing.GroupLayout(pnDasar);
         pnDasar.setLayout(pnDasarLayout);
         pnDasarLayout.setHorizontalGroup(
@@ -180,11 +171,11 @@ public class Absensi extends javax.swing.JPanel {
                 .addComponent(lbDataAbsensi)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbJamMasukJamPulang)
-                .addGap(18, 18, 18)
-                .addComponent(tbAbsensi, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(txtScan, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tbAbsensi, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txtScan, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
         );
 
         add(pnDasar, java.awt.BorderLayout.CENTER);
@@ -207,8 +198,6 @@ public class Absensi extends javax.swing.JPanel {
         String idGuru = dao.ambilDariQR(dataQR);
         dao.prosesAbsensi(idGuru);
         tampilkanDataHariIni();
-        /*dao.notifikasi("Absensi berhasil untuk guru dengan ID: " + idGuru,
-                "Informasi", JOptionPane.INFORMATION_MESSAGE,3000);*/
     } catch (SQLException ex) {
         dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
                 "Peringatan", JOptionPane.INFORMATION_MESSAGE,2000);
