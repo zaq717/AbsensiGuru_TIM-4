@@ -105,7 +105,7 @@ public class AbsensiDao {
         }
 
         if (waktuSekarang.isBefore(jamMulaiPulang)) {
-            notifikasi("Belum waktunya absen pulang! Mulai pukul 10:30.",
+            notifikasi("Belum waktunya absen pulang! Absen pulang mulai pukul 10:30.",
                     "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
             conn.close();
             return;
@@ -123,7 +123,7 @@ public class AbsensiDao {
     } else {
         // Belum absen masuk
         if (waktuSekarang.isAfter(jamAkhirMasuk)) {
-            notifikasi("Sudah lewat waktu absen masuk! Maksimal pukul 10:29.",
+            notifikasi("Tidak bisa absen masuk! Absen masuk maksimal pukul 10:29.",
                     "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
             
         } else {
