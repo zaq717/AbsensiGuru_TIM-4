@@ -1,5 +1,7 @@
 package absensiguru.view;
 
+import absensiguru.dao.LoginDao;
+import javax.swing.JOptionPane;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
 import java.awt.geom.RoundRectangle2D;
@@ -18,6 +20,9 @@ public class FormLogin extends javax.swing.JFrame {
             System.err.println("FlatLaf Error");
         }
         initComponents();
+        tfUsername.addActionListener(e-> tfPassword.requestFocus()); //ketika klik enter maka langsung pindah ke field pw
+        tfPassword.addActionListener(e-> btnLogin.doClick()); //menjalankan semua kode di dalam btnLogin
+        
         setBackground(new Color(0, 0, 0, 0));
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 10, 10));
         tfUsername.putClientProperty("JComponent.roundRect", true);
@@ -113,7 +118,6 @@ public class FormLogin extends javax.swing.JFrame {
         pnDasar.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/icons8-student-70.png"))); // NOI18N
-        jLabel1.setText("jLabel1");
 
         btnLogin.setBackground(new java.awt.Color(23, 163, 74));
         btnLogin.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -127,17 +131,21 @@ public class FormLogin extends javax.swing.JFrame {
         });
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Username");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Password");
 
+        tfPassword.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         tfPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tfPasswordActionPerformed(evt);
             }
         });
 
+        tfUsername.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         tfUsername.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tfUsernameActionPerformed(evt);
@@ -153,20 +161,21 @@ public class FormLogin extends javax.swing.JFrame {
         pnDasar.setLayout(pnDasarLayout);
         pnDasarLayout.setHorizontalGroup(
             pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnDasarLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDasarLayout.createSequentialGroup()
                 .addContainerGap(19, Short.MAX_VALUE)
                 .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDasarLayout.createSequentialGroup()
-                        .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2)
-                            .addComponent(btnLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                            .addComponent(jLabel3)
-                            .addComponent(tfPassword)
-                            .addComponent(tfUsername))
-                        .addGap(20, 20, 20))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDasarLayout.createSequentialGroup()
                         .addComponent(jLabel4)
-                        .addGap(63, 63, 63))))
+                        .addGap(63, 63, 63))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnDasarLayout.createSequentialGroup()
+                        .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btnLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                                .addComponent(tfPassword)
+                                .addComponent(tfUsername))
+                            .addComponent(jLabel3))
+                        .addGap(20, 20, 20))))
             .addGroup(pnDasarLayout.createSequentialGroup()
                 .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnDasarLayout.createSequentialGroup()
@@ -196,7 +205,7 @@ public class FormLogin extends javax.swing.JFrame {
                 .addComponent(tfPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         getContentPane().add(pnDasar, java.awt.BorderLayout.CENTER);
@@ -235,10 +244,28 @@ public class FormLogin extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
 
+        String username = tfUsername.getText(); // ambil username dari text field
+        String password = new String(tfPassword.getPassword()); // ambil password
+
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Username dan Password harus diisi!");
+            return;
+        }
+
+        // panggil daoLogin
+        LoginDao dao = new LoginDao();
+        boolean loginBerhasil = dao.cekLogin(username, password);
+
+        if (loginBerhasil) {
+            new MainMenu().setVisible(true);
+            this.dispose(); // tutup form login
+        } else {
+            JOptionPane.showMessageDialog(this, "Username atau Password salah!");
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void tfPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfPasswordActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:        
     }//GEN-LAST:event_tfPasswordActionPerformed
 
     /**

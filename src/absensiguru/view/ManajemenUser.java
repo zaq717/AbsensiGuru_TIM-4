@@ -1,7 +1,12 @@
 package absensiguru.view;
 
+import absensiguru.dao.ManajemenDao;
+import absensiguru.model.ManajemenModel;
 import com.formdev.flatlaf.FlatLightLaf;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -19,6 +24,33 @@ public class ManajemenUser extends javax.swing.JPanel {
             System.err.println("FlatLaf Error");
         }
         initComponents();
+        tampildata();
+        reset();
+
+    }
+
+    private void tampildata() {
+        String[] kolom = {"Username", "Password"};
+        DefaultTableModel model = new DefaultTableModel(null, kolom);
+        tblUser.setModel(model);
+
+        ManajemenDao dao = new ManajemenDao();
+        List<ManajemenModel> list = dao.getall();
+
+        for (ManajemenModel m : list) {
+            Object[] data = {
+                m.getusername(),
+                m.getpassword()
+            };
+            model.addRow(data);
+        }
+        tblUser.setModel(model);
+    }
+
+    private void reset() {
+        txtID.setText("");
+        tfUsername.setText("");
+        tfPassword.setText("");
     }
 
     /**
@@ -43,7 +75,7 @@ public class ManajemenUser extends javax.swing.JPanel {
         btnHapus = new javax.swing.JButton();
         btnReset1 = new javax.swing.JButton();
         tbUser = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblUser = new javax.swing.JTable();
         txtID = new javax.swing.JLabel();
 
         btnReset.setBackground(new java.awt.Color(0, 150, 253));
@@ -87,6 +119,12 @@ public class ManajemenUser extends javax.swing.JPanel {
         lbPassword.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         lbPassword.setText("Password  :");
 
+        tfUsername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfUsernameActionPerformed(evt);
+            }
+        });
+
         tfPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tfPasswordActionPerformed(evt);
@@ -120,6 +158,11 @@ public class ManajemenUser extends javax.swing.JPanel {
         btnHapus.setForeground(new java.awt.Color(255, 255, 255));
         btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/icons8-delete-20.png"))); // NOI18N
         btnHapus.setText("Hapus");
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
 
         btnReset1.setBackground(new java.awt.Color(0, 150, 253));
         btnReset1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -132,7 +175,7 @@ public class ManajemenUser extends javax.swing.JPanel {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -143,7 +186,12 @@ public class ManajemenUser extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tbUser.setViewportView(jTable1);
+        tblUser.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblUserMouseClicked(evt);
+            }
+        });
+        tbUser.setViewportView(tblUser);
 
         txtID.setForeground(new java.awt.Color(242, 242, 242));
         txtID.setText("ID");
@@ -210,19 +258,91 @@ public class ManajemenUser extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
+        ManajemenModel m = new ManajemenModel();
+        m.setusername(tfUsername.getText());
+        m.setpassword(tfPassword.getText());
+
+        ManajemenDao dao = new ManajemenDao();
+        dao.insert(m);
+
+        JOptionPane.showMessageDialog(this, "Data berhasil disimpan");
+        tampildata();
+        reset();
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
         // TODO add your handling code here:
+        int row = tblUser.getSelectedRow();
+        if (row != -1) {
+            // Mengecek apakah ada baris (row) yang dipilih di tabel. 
+            // Jika tidak ada baris yang dipilih, maka nilainya -1, -1 sebagai penanda bahwa tidak ada baris yang sedang dipilih di tabel JTable.
+            String usernameLama = tblUser.getValueAt(row, 0).toString(); // ambil username lama dari tabel
+            String usernameBaru = tfUsername.getText();
+            String passwordBaru = tfPassword.getText();
+
+            ManajemenModel m = new ManajemenModel();
+            m.setusername(usernameBaru);
+            m.setpassword(passwordBaru);
+
+            ManajemenDao dao = new ManajemenDao();
+            dao.update(m, usernameLama);
+            tampildata();
+            reset();
+            JOptionPane.showMessageDialog(this, "Data berhasil diubah!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Pilih data yang ingin diubah terlebih dahulu!");
+        }
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
+
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnReset1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReset1ActionPerformed
         // TODO add your handling code here:
+        reset();
     }//GEN-LAST:event_btnReset1ActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        // TODO add your handling code here:
+        int row = tblUser.getSelectedRow();
+        if (row != -1) {
+            String username = tblUser.getValueAt(row, 0).toString(); // kolom 0 = username
+
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Yakin ingin menghapus user: " + username + " ?",
+                    "Konfirmasi Hapus",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                ManajemenModel m = new ManajemenModel();
+                m.setusername(username);
+
+                ManajemenDao dao = new ManajemenDao();
+                dao.delete(m);
+
+                JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
+                tampildata(); // refresh tabel
+                reset();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus!");
+        }
+    }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void tblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUserMouseClicked
+        // TODO add your handling code here:
+        int row = tblUser.getSelectedRow();
+        tfUsername.setText(tblUser.getValueAt(row, 0).toString());
+        tfPassword.setText(tblUser.getValueAt(row, 1).toString());
+
+    }//GEN-LAST:event_tblUserMouseClicked
+
+    private void tfUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfUsernameActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_tfUsernameActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -232,12 +352,12 @@ public class ManajemenUser extends javax.swing.JPanel {
     private javax.swing.JButton btnReset1;
     private javax.swing.JButton btnTambah;
     private javax.swing.JButton btnUbah;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lbManajemenUser;
     private javax.swing.JLabel lbPassword;
     private javax.swing.JLabel lbUsername;
     private javax.swing.JPanel pnDasar;
     private javax.swing.JScrollPane tbUser;
+    private javax.swing.JTable tblUser;
     private javax.swing.JTextField tfPassword;
     private javax.swing.JTextField tfUsername;
     private javax.swing.JLabel txtID;
