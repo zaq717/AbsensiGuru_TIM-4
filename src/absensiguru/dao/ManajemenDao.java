@@ -62,7 +62,9 @@ public class ManajemenDao {
         List<ManajemenModel> list = new ArrayList<>();
         String sql = "SELECT * FROM users";
         try (
-                Connection conn = Koneksi.konek(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+                Connection conn = Koneksi.konek(); 
+                PreparedStatement ps = conn.prepareStatement(sql); 
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 ManajemenModel m = new ManajemenModel();
