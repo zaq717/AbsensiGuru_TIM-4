@@ -31,6 +31,21 @@ public class GuruDao {
             System.err.println("Gagal insert data : " + e.getMessage());
             }      
         }
+     public void update(GuruModel guru) {
+        String sql = "UPDATE guru SET nama=?, jenis_kelamin=?, alamat=? WHERE nip=?";
+        try (Connection conn = Koneksi.konek();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, guru.getNama());
+            ps.setString(2, guru.getJenisKelamin());
+            ps.setString(3, guru.getAlamat());
+            ps.setString(4, guru.getNip());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Gagal update data: " + e.getMessage());
+        }
+    }
+
     
     
     public void delete(String nip){

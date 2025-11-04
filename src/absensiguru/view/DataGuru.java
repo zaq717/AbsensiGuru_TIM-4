@@ -32,7 +32,7 @@ public class DataGuru extends javax.swing.JFrame {
         loadTable();
     }
 
-    // 🔹 Menampilkan data guru di tabel
+    //Menampilkan data guru di tabel
     private void loadTable() {
         String[] kolom = {"NIP", "Nama", "Jenis Kelamin", "Alamat"};
         model = new DefaultTableModel(null, kolom);
@@ -45,7 +45,7 @@ public class DataGuru extends javax.swing.JFrame {
         tbDataGuru.setModel(model);
     }
 
-    // 🔹 Membersihkan form input
+    //Membersihkan form input
     private void resetForm() {
         fNip.setText("");
         fNama.setText("");
@@ -85,8 +85,6 @@ public class DataGuru extends javax.swing.JFrame {
         fAlamat = new javax.swing.JTextArea();
         txtID = new javax.swing.JLabel();
 
-        setLayout(new java.awt.BorderLayout());
-
         barAtas.setBackground(new java.awt.Color(16, 185, 129));
 
         lbDataGuru.setFont(new java.awt.Font("Segoe UI", 1, 17)); // NOI18N
@@ -107,7 +105,7 @@ public class DataGuru extends javax.swing.JFrame {
             .addComponent(lbDataGuru, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
         );
 
-        add(barAtas, java.awt.BorderLayout.PAGE_START);
+        getContentPane().add(barAtas, java.awt.BorderLayout.PAGE_START);
 
         lbNip.setText("NIP");
 
@@ -137,6 +135,11 @@ public class DataGuru extends javax.swing.JFrame {
             public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        tbDataGuru.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbDataGuruMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tbDataGuru);
@@ -190,6 +193,11 @@ public class DataGuru extends javax.swing.JFrame {
         btnGenerateQR.setForeground(new java.awt.Color(255, 255, 255));
         btnGenerateQR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/icons8-qr-20.png"))); // NOI18N
         btnGenerateQR.setText("Generate QR");
+        btnGenerateQR.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnGenerateQRMouseClicked(evt);
+            }
+        });
         btnGenerateQR.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGenerateQRActionPerformed(evt);
@@ -274,7 +282,7 @@ public class DataGuru extends javax.swing.JFrame {
                 .addContainerGap(104, Short.MAX_VALUE))
         );
 
-        add(pnDasar, java.awt.BorderLayout.CENTER);
+        getContentPane().add(pnDasar, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGenerateQRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateQRActionPerformed
@@ -337,6 +345,14 @@ public class DataGuru extends javax.swing.JFrame {
         fAlamat.setText(model.getValueAt(baris, 3).toString());
         
     }//GEN-LAST:event_tbDataGuruAncestorAdded
+
+    private void tbDataGuruMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataGuruMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tbDataGuruMouseClicked
+
+    private void btnGenerateQRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGenerateQRMouseClicked
+
+    }//GEN-LAST:event_btnGenerateQRMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
