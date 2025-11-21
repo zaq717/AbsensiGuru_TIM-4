@@ -4,31 +4,38 @@
  */
 package absensiguru.model;
 
+import absensiguru.helper.Koneksi;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author THINKPAD X280
  */
-public class AbsensiModel {
-    private String idGuru,namaGuru,status;
-    private Date tanggal;
-    private Time jamMasuk;
-    private Time jamPulang;
+public class AbsensiModel extends Koneksi {
 
-    public AbsensiModel(String idGuru, String namaGuru, String status, Date tanggal, Time jamMasuk, Time jamPulang) {
-        this.idGuru = idGuru;
-        this.namaGuru = namaGuru;
-        this.status = status;
-        this.tanggal = tanggal;
-        this.jamMasuk = jamMasuk;
-        this.jamPulang = jamPulang;
-    }
+    private String idGuru, namaGuru, status;
+    private LocalDate tanggal;
+    private LocalTime jamMasuk;
+    private LocalTime jamPulang;
+    
 
     public AbsensiModel() {
+        /*koneksi = super.konek();
+        this.tanggal = LocalDate.now();*/
     }
-    
 
     public String getIdGuru() {
         return idGuru;
@@ -54,29 +61,28 @@ public class AbsensiModel {
         this.status = status;
     }
 
-    public Date getTanggal() {
+    public LocalDate getTanggal() {
         return tanggal;
     }
 
-    public void setTanggal(Date tanggal) {
+    public void setTanggal(LocalDate tanggal) {
         this.tanggal = tanggal;
     }
 
-    public Time getJamMasuk() {
+    public LocalTime getJamMasuk() {
         return jamMasuk;
     }
 
-    public void setJamMasuk(Time jamMasuk) {
+    public void setJamMasuk(LocalTime jamMasuk) {
         this.jamMasuk = jamMasuk;
     }
 
-    public Time getJamPulang() {
+    public LocalTime getJamPulang() {
         return jamPulang;
     }
 
-    public void setJamPulang(Time jamPulang) {
+    public void setJamPulang(LocalTime jamPulang) {
         this.jamPulang = jamPulang;
     }
-    
-    
-    }
+
+}
