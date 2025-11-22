@@ -99,9 +99,9 @@ public class AbsensiDao extends Koneksi{
         try {
             //aturan waktu absen
             LocalTime waktuSekarang = LocalTime.now(ZoneId.of("Asia/Jakarta"));
-            LocalTime jamAwalMasuk = LocalTime.of(07, 00);
-            LocalTime jamAkhirMasuk = LocalTime.of(9, 59);
-            LocalTime jamMulaiPulang = LocalTime.of(10, 00);
+            LocalTime jamAwalMasuk = LocalTime.of(07, 00,00);
+            LocalTime jamAkhirMasuk = LocalTime.of(22, 59,59);
+            LocalTime jamMulaiPulang = LocalTime.of(23, 00,00);
 
             boolean sudahAbsen = CekAbsenHariIni(idGuru);//cek apakah sudah absen hari ini
 
