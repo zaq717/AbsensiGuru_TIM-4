@@ -86,7 +86,7 @@ public class MainMenu extends javax.swing.JFrame {
 
         lbFuelin.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lbFuelin.setForeground(new java.awt.Color(255, 255, 255));
-        lbFuelin.setText("Absensi");
+        lbFuelin.setText("Presensi");
 
         pnDashboard.setBackground(new java.awt.Color(16, 185, 129));
 
