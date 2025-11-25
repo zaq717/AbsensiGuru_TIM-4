@@ -3,11 +3,8 @@ package absensiguru.view;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIManager;
 import absensiguru.dao.AbsensiDao;
-import absensiguru.model.AbsensiModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -24,9 +21,9 @@ public class Absensi extends javax.swing.JPanel {
             System.err.println("FlatLaf Error");
         }
         initComponents();
-            model = new DefaultTableModel();
-            tblAbsensi.setModel(model);
-            load_table();
+        model = new DefaultTableModel();
+        tblAbsensi.setModel(model);
+        load_table();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -34,10 +31,11 @@ public class Absensi extends javax.swing.JPanel {
             }
         });
     }
+
     void load_table() {
-        model.setRowCount(0);
+        model.setRowCount(0);//mengahapus semua data kolom yang sebelumnya ada ditabel
         model.setColumnCount(0);
-        
+        //menambahkan kolom ke JTable
         model.addColumn("Nama Guru");
         model.addColumn("Tanggal");
         model.addColumn("Jam Masuk");
@@ -45,8 +43,9 @@ public class Absensi extends javax.swing.JPanel {
         model.addColumn("Status");
 
         try {
-            ResultSet result = dao.getAbsensiHariIni();
+            ResultSet result = dao.getAbsensiHariIni();//memanggil method getAbsenHariIni
             while (result.next()) {
+                    //memanggil baris data dalam database ke JTable
                 model.addRow(new Object[]{
                     result.getString("nama_guru"),
                     result.getString("tanggal"),
@@ -55,37 +54,11 @@ public class Absensi extends javax.swing.JPanel {
                     result.getString("status")
                 });
             }
-            tblAbsensi.setModel(model);
+            tblAbsensi.setModel(model);//mengeset tblAbsensi dengan pengaturan diatas
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
-
-    /*void load_table(List<AbsensiModel> list) {
-        try {
-            DefaultTableModel model = new DefaultTableModel();
-            model.addColumn("Nama Guru");
-            //model.addColumn("ID Guru");
-            model.addColumn("Tanggal");
-            model.addColumn("Jam Masuk");
-            model.addColumn("Jam Pulang");
-            model.addColumn("Status");
-
-            for (AbsensiModel ab : list) {
-                model.addRow(new Object[]{
-                    ab.getNamaGuru(),
-                    ab.getIdGuru(),
-                    ab.getTanggal(),
-                    ab.getJamMasuk(),
-                    ab.getJamPulang(),
-                    ab.getStatus()
-                });
-            }
-            tblAbsensi.setModel(model);
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }*/
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -220,11 +193,9 @@ public class Absensi extends javax.swing.JPanel {
 
         try {
             String idGuru = dao.ambilDariQR(dataQR);
-            
+
             dao.ProsesAbsensi(idGuru);
             load_table();
-            /*dao.notifikasi("Absensi berhasil untuk guru dengan ID: " + idGuru,
-                "Informasi", JOptionPane.INFORMATION_MESSAGE,3000);*/
         } catch (SQLException ex) {
             dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
                     "Peringatan", JOptionPane.INFORMATION_MESSAGE, 2000);

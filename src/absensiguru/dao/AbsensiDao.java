@@ -21,7 +21,8 @@ import java.time.ZoneId;
  *
  * @author THINKPAD X280
  */
-public class AbsensiDao extends Koneksi{
+public class AbsensiDao extends Koneksi {
+
     private final Connection koneksi;
     private PreparedStatement ps;
     private Statement st;
@@ -32,21 +33,19 @@ public class AbsensiDao extends Koneksi{
     public AbsensiDao() {
         koneksi = super.konek();
     }
-    
-    
-    public ResultSet getAbsensiHariIni(){
-        String query = "SELECT a.*, g.nama AS nama_guru "
+
+    public ResultSet getAbsensiHariIni() {
+        Query = "SELECT a.*, g.nama AS nama_guru "
                 + " FROM absensi a JOIN guru g ON a.id_guru = g.id_guru WHERE a.tanggal = CURDATE() "
                 + "ORDER BY a.tanggal DESC,a.jam_masuk DESC";
         try {
             st = koneksi.createStatement();
-            rs = st.executeQuery(query);
+            rs = st.executeQuery(Query);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Data Gagal diTampilkan");
-        }       
+            JOptionPane.showMessageDialog(null, "Data Gagal diTampilkan");
+        }
         return rs;
     }
-    
 
     public boolean CekGuru(String idGuru) throws SQLException {
         Query = "SELECT * FROM guru WHERE id_guru = ?";//mengecek apakah guru terdaftar
@@ -56,7 +55,7 @@ public class AbsensiDao extends Koneksi{
 
         if (!rs.next()) {
             notifikasi("Guru dengan ID " + idGuru + " tidak ditemukan!",
-                    "Error", JOptionPane.ERROR_MESSAGE,2000);
+                    "Error", JOptionPane.ERROR_MESSAGE, 2000);
             return false;
         }
         return true;
@@ -71,10 +70,10 @@ public class AbsensiDao extends Koneksi{
         if (rs.next()) {
             Time jamMasuk = rs.getTime("jam_masuk");
             Time jamPulang = rs.getTime("jam_pulang");
-                
-                am.setJamMasuk(jamMasuk!= null ? jamMasuk.toLocalTime() : null);
-                am.setJamPulang(jamPulang != null ? jamPulang.toLocalTime() : null);
-            
+
+            am.setJamMasuk(jamMasuk != null ? jamMasuk.toLocalTime() : null);
+            am.setJamPulang(jamPulang != null ? jamPulang.toLocalTime() : null);
+
             return true;
         }
         return false;
@@ -99,42 +98,42 @@ public class AbsensiDao extends Koneksi{
         try {
             //aturan waktu absen
             LocalTime waktuSekarang = LocalTime.now(ZoneId.of("Asia/Jakarta"));
-            LocalTime jamAwalMasuk = LocalTime.of(07, 00,00);
-            LocalTime jamAkhirMasuk = LocalTime.of(22, 59,59);
-            LocalTime jamMulaiPulang = LocalTime.of(23, 00,00);
+            LocalTime jamAwalMasuk = LocalTime.of(07, 00, 00);
+            LocalTime jamAkhirMasuk = LocalTime.of(10, 29, 59);
+            LocalTime jamMulaiPulang = LocalTime.of(10, 30, 00);
 
             boolean sudahAbsen = CekAbsenHariIni(idGuru);//cek apakah sudah absen hari ini
 
             if (!sudahAbsen) {//absen masuk
-                   //jika waktu sekarang sebelum waktu absen masuk
+                //jika waktu sekarang sebelum waktu absen masuk
                 if (waktuSekarang.isBefore(jamAwalMasuk)) {
                     notifikasi("Belum waktunya absen masuk!",
-                            "Peringatan", JOptionPane.WARNING_MESSAGE,2000);
+                            "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
                     return;
                 }//jika waktu sekarang sudah lewat waktu absen masuk
                 if (waktuSekarang.isAfter(jamAkhirMasuk)) {
                     notifikasi("Sudah lewat waktu absen masuk!",
-                            "Peringatan", JOptionPane.WARNING_MESSAGE,2000);
+                            "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
                     return;
                 }//jika waktu sekarang berada pada zona waktu absen masuk
                 absenMasuk(idGuru);//menambahkan absen masuk
                 notifikasi("Absensi masuk berhasil!",
-                        "Berhasil", JOptionPane.INFORMATION_MESSAGE,2000);
+                        "Berhasil", JOptionPane.INFORMATION_MESSAGE, 2000);
                 return;
             }//absen pulang
-            if (am.getJamPulang() != null) {//jika absen masuk sudah terisi maka sudah absen pulang
+            if (am.getJamPulang() != null) {//jika absen pulang sudah terisi maka sudah absen pulang
                 notifikasi("Anda sudah absen pulang hari ini!",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE,2000);
+                        "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
                 return;
-            }//jika waktu absen sebelum waktunya absen pulang
+            }//jika absen pulang sebelum waktunya absen pulang
             if (waktuSekarang.isBefore(jamMulaiPulang)) {
                 notifikasi("Belum waktunya absen pulang!",
-                        "Peringatan", JOptionPane.WARNING_MESSAGE,2000);
+                        "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
                 return;
             }//jika waktu sudah berada pada zona waktu absen pulang
             absenPulang(idGuru);//lakukan absen pulang
             notifikasi("Absensi pulang berhasil!",
-                    "Berhasil", JOptionPane.INFORMATION_MESSAGE,2000);
+                    "Berhasil", JOptionPane.INFORMATION_MESSAGE, 2000);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null,
                     "Terjadi kesalahan: " + e.getMessage());
@@ -160,4 +159,4 @@ public class AbsensiDao extends Koneksi{
         new javax.swing.Timer(timeMills, e -> dialog.dispose()).start();
         dialog.setVisible(true);
     }
-} 
+}

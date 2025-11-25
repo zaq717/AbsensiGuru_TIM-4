@@ -5,20 +5,8 @@
 package absensiguru.model;
 
 import absensiguru.helper.Koneksi;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -32,10 +20,6 @@ public class AbsensiModel extends Koneksi {
     private LocalTime jamPulang;
     
 
-    public AbsensiModel() {
-        /*koneksi = super.konek();
-        this.tanggal = LocalDate.now();*/
-    }
 
     public String getIdGuru() {
         return idGuru;
