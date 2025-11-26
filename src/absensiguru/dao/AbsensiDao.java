@@ -10,154 +10,150 @@ import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Statement;
+import java.sql.Time;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
-
-
 /**
  *
  * @author THINKPAD X280
  */
-public class AbsensiDao {
-     
-      public List<AbsensiModel> getAbsensiHariIni() throws SQLException {
-        List<AbsensiModel> list = new ArrayList<>();
-        String sql = "SELECT a.*, g.nama AS nama_guru "
-                + " FROM absensi a JOIN guru g ON a.id_guru = g.id_guru WHERE a.tanggal = CURDATE()"
+public class AbsensiDao extends Koneksi {
+
+    private final Connection koneksi;
+    private PreparedStatement ps;
+    private Statement st;
+    private ResultSet rs;
+    private String Query;
+    AbsensiModel am = new AbsensiModel();
+
+    public AbsensiDao() {
+        koneksi = super.konek();
+    }
+
+    public ResultSet getAbsensiHariIni() {
+        Query = "SELECT a.*, g.nama AS nama_guru "
+                + " FROM absensi a JOIN guru g ON a.id_guru = g.id_guru WHERE a.tanggal = CURDATE() "
                 + "ORDER BY a.tanggal DESC,a.jam_masuk DESC";
-
-        try (Connection conn = Koneksi.konek();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                AbsensiModel ab = new AbsensiModel();
-                ab.setNamaGuru(rs.getString("nama_guru"));
-                ab.setIdGuru(rs.getString("id_guru"));
-                ab.setTanggal(rs.getDate("tanggal"));
-                ab.setJamMasuk(rs.getTime("jam_masuk"));
-                ab.setJamPulang(rs.getTime("jam_pulang"));
-                ab.setStatus(rs.getString("status"));
-                list.add(ab);
-            }
+        try {
+            st = koneksi.createStatement();
+            rs = st.executeQuery(Query);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Data Gagal diTampilkan");
         }
-
-        return list;
+        return rs;
     }
 
-    public void prosesAbsensi(String kodeGuru) throws SQLException {
-    Connection conn = Koneksi.konek();
-    PreparedStatement ps;
-    ResultSet rs;
+    public boolean CekGuru(String idGuru) throws SQLException {
+        Query = "SELECT * FROM guru WHERE id_guru = ?";//mengecek apakah guru terdaftar
+        ps = koneksi.prepareStatement(Query);
+        ps.setString(1, idGuru);
+        rs = ps.executeQuery();
 
-    // Mengecek apakah guru terdaftar
-    String sqlGuru = "SELECT * FROM guru WHERE id_guru = ?";
-    ps = conn.prepareStatement(sqlGuru);
-    ps.setString(1, kodeGuru);
-    rs = ps.executeQuery();
-
-    if (!rs.next()) {
-        notifikasi("Guru dengan ID " + kodeGuru + " tidak ditemukan!",
-                "Error", JOptionPane.ERROR_MESSAGE, 2000);
-        conn.close();
-        return;
+        if (!rs.next()) {
+            notifikasi("Guru dengan ID " + idGuru + " tidak ditemukan!",
+                    "Error", JOptionPane.ERROR_MESSAGE, 2000);
+            return false;
+        }
+        return true;
     }
 
-    String idGuru = rs.getString("id_guru");
+    public boolean CekAbsenHariIni(String idGuru) throws SQLException {
+        Query = "SELECT * FROM absensi WHERE id_guru=? AND tanggal=CURDATE()";
+        ps = koneksi.prepareStatement(Query);
+        ps.setString(1, idGuru);
+        rs = ps.executeQuery();
 
-    // Tentukan waktu
-    LocalTime waktuSekarang = LocalTime.now(ZoneId.of("Asia/Jakarta"));
-    LocalTime jamAwalMasuk = LocalTime.of(7, 0, 0);
-    LocalTime jamAkhirMasuk = LocalTime.of(10, 29, 59);
-    LocalTime jamMulaiPulang = LocalTime.of(10, 30, 0);
-    
-        System.out.println("DEBUG: Waktu Sekarang" + waktuSekarang);
+        if (rs.next()) {
+            Time jamMasuk = rs.getTime("jam_masuk");
+            Time jamPulang = rs.getTime("jam_pulang");
 
-    // Tolak absen sebelum jam awal
-    if (waktuSekarang.isBefore(jamAwalMasuk)) {
-        notifikasi("Belum waktunya absen! Absen masuk mulai pukul 07:00.",
-                "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
-        conn.close();
-        return;
+            am.setJamMasuk(jamMasuk != null ? jamMasuk.toLocalTime() : null);
+            am.setJamPulang(jamPulang != null ? jamPulang.toLocalTime() : null);
+
+            return true;
+        }
+        return false;
     }
 
-    // Cek apakah guru sudah absen hari ini
-    String sqlCek = "SELECT * FROM absensi WHERE id_guru=? AND tanggal=CURDATE()";
-    ps = conn.prepareStatement(sqlCek);
-    ps.setString(1, idGuru);
-    ResultSet rsCek = ps.executeQuery();
+    private void absenMasuk(String idGuru) throws SQLException {
+        Query = "INSERT INTO absensi (id_guru, jam_masuk, status, tanggal) VALUES (?, CURTIME(), 'Hadir Tidak Lengkap', CURDATE())";
+        ps = koneksi.prepareStatement(Query);
+    }
 
-    if (rsCek.next()) {
-        //mengonversi waktu dari database (java.sql.Time) ke waktu (LocalTime)
-        java.sql.Time sqljamPulang = rsCek.getTime("jam_pulang");
-        LocalTime jamPulang = (sqljamPulang != null) ? sqljamPulang.toLocalTime() :null;
-        // Sudah absen masuk, cek jam pulang
-        if (jamPulang != null) {
-            notifikasi("Anda sudah absen pulang hari ini!",
-                    "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
-            conn.close();
-            return;
-        }
-
-        if (waktuSekarang.isBefore(jamMulaiPulang)) {
-            notifikasi("Belum waktunya absen pulang! Absen pulang mulai pukul 10:30.",
-                    "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
-            conn.close();
-            return;
-        }
-
-        // Update jam pulang
-        String sqlUpdate = "UPDATE absensi SET jam_pulang=CURTIME(), status='Hadir Lengkap' "
-                + "WHERE id_guru=? AND tanggal=CURDATE()";
-        ps = conn.prepareStatement(sqlUpdate);
+    private void absenPulang(String idGuru) throws SQLException {
+        Query = "UPDATE absensi SET jam_pulang=CURTIME(), status='Hadir Lengkap' WHERE id_guru=? AND tanggal=CURDATE()";
+        ps = koneksi.prepareStatement(Query);
         ps.setString(1, idGuru);
         ps.executeUpdate();
-
-        notifikasi("Absensi pulang berhasil!",
-                "Berhasil", JOptionPane.INFORMATION_MESSAGE, 2000);
-    } else {
-        // Belum absen masuk
-        if (waktuSekarang.isAfter(jamAkhirMasuk)) {
-            notifikasi("Tidak bisa absen masuk! Absen masuk maksimal pukul 10:29.",
-                    "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
-            
-        } else {
-            // Insert data absen masuk
-            String sqlInsert = "INSERT INTO absensi (id_guru, jam_masuk, status, tanggal) "
-                    + "VALUES (?, CURTIME(), 'Hadir Tidak Lengkap', CURDATE())";
-            ps = conn.prepareStatement(sqlInsert);
-            ps.setString(1, idGuru);
-            ps.executeUpdate();
-
-            notifikasi("Absensi masuk berhasil!",
-                    "Berhasil", JOptionPane.INFORMATION_MESSAGE, 2000);
-        }
     }
 
-    conn.close();
-}
+    public void ProsesAbsensi(String idGuru) throws SQLException {
+        am.setIdGuru(idGuru);//untuk setIdGuru untuk mengetahui idguru mana yang diproses;
+        try {
+            //aturan waktu absen
+            LocalTime waktuSekarang = LocalTime.now(ZoneId.of("Asia/Jakarta"));
+            LocalTime jamAwalMasuk = LocalTime.of(07, 00, 00);
+            LocalTime jamAkhirMasuk = LocalTime.of(10, 29, 59);
+            LocalTime jamMulaiPulang = LocalTime.of(10, 30, 00);
 
+            boolean sudahAbsen = CekAbsenHariIni(idGuru);//cek apakah sudah absen hari ini
 
+            if (!sudahAbsen) {//absen masuk
+                //jika waktu sekarang sebelum waktu absen masuk
+                if (waktuSekarang.isBefore(jamAwalMasuk)) {
+                    notifikasi("Belum waktunya absen masuk!",
+                            "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
+                    return;
+                }//jika waktu sekarang sudah lewat waktu absen masuk
+                if (waktuSekarang.isAfter(jamAkhirMasuk)) {
+                    notifikasi("Sudah lewat waktu absen masuk!",
+                            "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
+                    return;
+                }//jika waktu sekarang berada pada zona waktu absen masuk
+                absenMasuk(idGuru);//menambahkan absen masuk
+                notifikasi("Absensi masuk berhasil!",
+                        "Berhasil", JOptionPane.INFORMATION_MESSAGE, 2000);
+                return;
+            }//absen pulang
+            if (am.getJamPulang() != null) {//jika absen pulang sudah terisi maka sudah absen pulang
+                notifikasi("Anda sudah absen pulang hari ini!",
+                        "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
+                return;
+            }//jika absen pulang sebelum waktunya absen pulang
+            if (waktuSekarang.isBefore(jamMulaiPulang)) {
+                notifikasi("Belum waktunya absen pulang!",
+                        "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
+                return;
+            }//jika waktu sudah berada pada zona waktu absen pulang
+            absenPulang(idGuru);//lakukan absen pulang
+            notifikasi("Absensi pulang berhasil!",
+                    "Berhasil", JOptionPane.INFORMATION_MESSAGE, 2000);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Terjadi kesalahan: " + e.getMessage());
+        }
+    }
 
     public String ambilDariQR(String dataQR) {
         String[] parts = dataQR.split("\\|");
         for (String part : parts) {
             if (part.startsWith("ID:")) {
-                return  part.replace("ID:","").trim();
+                return part.replace("ID:", "").trim();
             }
         }
-          return "";
-    }   
-    public void notifikasi(String pesan,String title, int tipePesan, int timeMills){
-        JOptionPane pane = new JOptionPane(pesan,tipePesan);//
-        JDialog dialog = pane.createDialog((java.awt.Component)null,title);
+        return "";
+    }
+
+    public void notifikasi(String pesan, String title, int tipePesan, int timeMills) {
+        JOptionPane pane = new JOptionPane(pesan, tipePesan);//
+        JDialog dialog = pane.createDialog((java.awt.Component) null, title);
         //timer untuk pesan
+        dialog.setModal(false);
         new javax.swing.Timer(timeMills, e -> dialog.dispose()).start();
         dialog.setVisible(true);
-}
+    }
 }

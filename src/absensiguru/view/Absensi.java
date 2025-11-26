@@ -3,9 +3,8 @@ package absensiguru.view;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIManager;
 import absensiguru.dao.AbsensiDao;
-import absensiguru.model.AbsensiModel;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -22,44 +21,42 @@ public class Absensi extends javax.swing.JPanel {
             System.err.println("FlatLaf Error");
         }
         initComponents();
-        tampilkanDataHariIni();
+        model = new DefaultTableModel();
+        tblAbsensi.setModel(model);
+        load_table();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 txtScan.requestFocusInWindow();
             }
         });
-        //new javax.swing.Timer(10000, e -> tampilkanDataHariIni()).start();        
     }
-    
-   
 
-    public void tampilkanDataHariIni() {
+    void load_table() {
+        model.setRowCount(0);//mengahapus semua data kolom yang sebelumnya ada ditabel
+        model.setColumnCount(0);
+        //menambahkan kolom ke JTable
+        model.addColumn("Nama Guru");
+        model.addColumn("Tanggal");
+        model.addColumn("Jam Masuk");
+        model.addColumn("Jam Pulang");
+        model.addColumn("Status");
+
         try {
-            List<AbsensiModel> list = dao.getAbsensiHariIni();
-            model = new DefaultTableModel();
-            model.addColumn("Nama Guru");
-            model.addColumn("ID Guru");
-            model.addColumn("Tanggal");
-            model.addColumn("Jam Masuk");
-            model.addColumn("Jam Pulang");
-            model.addColumn("Status");
-
-            for (AbsensiModel ab : list) {
+            ResultSet result = dao.getAbsensiHariIni();//memanggil method getAbsenHariIni
+            while (result.next()) {
+                    //memanggil baris data dalam database ke JTable
                 model.addRow(new Object[]{
-                    ab.getNamaGuru(),
-                    ab.getIdGuru(),
-                    ab.getTanggal(),
-                    ab.getJamMasuk(),
-                    ab.getJamPulang(),
-                    ab.getStatus()
+                    result.getString("nama_guru"),
+                    result.getString("tanggal"),
+                    result.getString("jam_masuk"),
+                    result.getString("jam_pulang"),
+                    result.getString("status")
                 });
             }
-            tblAbsensi.setModel(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal Menampilkan Data: " + e.getMessage());
-
+            tblAbsensi.setModel(model);//mengeset tblAbsensi dengan pengaturan diatas
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -193,18 +190,20 @@ public class Absensi extends javax.swing.JPanel {
     private void txtScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtScanActionPerformed
         // TODO add your handling code here:
         String dataQR = txtScan.getText();
-        
-    try {
-        String idGuru = dao.ambilDariQR(dataQR);
-        dao.prosesAbsensi(idGuru);
-        tampilkanDataHariIni();
-    } catch (SQLException ex) {
-        dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
-                "Peringatan", JOptionPane.INFORMATION_MESSAGE,2000);
-    }
 
-    txtScan.setText("");
-    txtScan.requestFocusInWindow();
+
+        try {
+            String idGuru = dao.ambilDariQR(dataQR);
+
+            dao.ProsesAbsensi(idGuru);
+            load_table();
+        } catch (SQLException ex) {
+            dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
+                    "Peringatan", JOptionPane.INFORMATION_MESSAGE, 2000);
+        }
+
+        txtScan.setText("");
+        txtScan.requestFocusInWindow();
 
     }//GEN-LAST:event_txtScanActionPerformed
 
