@@ -10,70 +10,82 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
-public class ManajemenDao {
+public class ManajemenDao extends Koneksi {
+
+    private final Connection conn;
+    private PreparedStatement ps;
+    private String sql;
+
+    public ManajemenDao() {
+        conn = super.konek();
+    }
 
     public void insert(ManajemenModel m) {
         try {
-            Connection conn = Koneksi.konek();
-            String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
-            PreparedStatement ps = conn.prepareStatement(sql);
+            sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+            ps = conn.prepareStatement(sql);
             ps.setString(1, m.getusername());
             ps.setString(2, m.getpassword());
             ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            JOptionPane.showMessageDialog(null, "Data Berhasil ditambah!");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Data gagal ditambah!" + e.getMessage());
         }
     }
 
-    public void update(ManajemenModel m, String usernameLama) {
-    String sql = "UPDATE users SET username=?, password=? WHERE username=?";
-    try (Connection conn = Koneksi.konek();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        
-        ps.setString(1, m.getusername());
-        ps.setString(2, m.getpassword());
-        ps.setString(3, usernameLama);
-        ps.executeUpdate();
-        
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-}
+    public void update(ManajemenModel m) {
+        try {
+            sql = "UPDATE users SET username=?,password=? WHERE id_user=?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, m.getusername());
+            ps.setString(2, m.getpassword());
+            ps.setInt(3, m.getId());
+            ps.executeUpdate();
 
+            JOptionPane.showMessageDialog(null, "Data Berhasil diubah!");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Data gagal diubah!" + e.getMessage());
+        }
+    }
 
     public void delete(ManajemenModel m) {
         try {
-            Connection conn = Koneksi.konek();
-            String sql = "DELETE FROM users WHERE username=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
+            sql = "DELETE FROM users WHERE username=?";
+            ps = conn.prepareStatement(sql);
             ps.setString(1, m.getusername());
             ps.executeUpdate();
             ps.close();
-            System.out.println("Data user berhasil dihapus!");
+            JOptionPane.showMessageDialog(null, "Data Berhasil dihapus!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Data Berhasil dihapus!");
+        }
+    }
+
+    public DefaultTableModel tampilData() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID User");
+        model.addColumn("Username");
+        model.addColumn("Password");
+
+        String sql = "SELECT * FROM users";
+        try (Connection conn = Koneksi.konek(); 
+                PreparedStatement ps = conn.prepareStatement(sql); 
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Object[] row = new Object[3];
+                row[0] = rs.getString("id_user");
+                row[1] = rs.getString("username");
+                row[2] = rs.getString("password");
+                model.addRow(row);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return model;
     }
-
-    public List<ManajemenModel> getall() {
-        List<ManajemenModel> list = new ArrayList<>();
-        String sql = "SELECT * FROM users";
-        try (
-                Connection conn = Koneksi.konek(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                ManajemenModel m = new ManajemenModel();
-                m.setusername(rs.getString("username"));
-                m.setpassword(rs.getString("password"));
-                list.add(m);
-            }
-        } catch (Exception e) {
-            System.out.println("Gagal Menampilkan data user: " + e.getMessage());
-        }
-        return list;
-    }
-
 }

@@ -20,6 +20,7 @@ public class FormLogin extends javax.swing.JFrame {
             System.err.println("FlatLaf Error");
         }
         initComponents();
+        reset();
         tfUsername.addActionListener(e-> tfPassword.requestFocus()); //ketika klik enter maka langsung pindah ke field pw
         tfPassword.addActionListener(e-> btnLogin.doClick()); //menjalankan semua kode di dalam btnLogin
         
@@ -30,6 +31,10 @@ public class FormLogin extends javax.swing.JFrame {
         tfPassword.putClientProperty("JComponent.roundRect", true);
         tfPassword.putClientProperty("JComponent.arc", 20);
         btnLogin.putClientProperty("JButton.buttonType", "roundRect");
+    }
+    void reset(){
+        
+        tfPassword.setText("");
     }
 
     /**
@@ -254,7 +259,7 @@ public class FormLogin extends javax.swing.JFrame {
 
         // panggil daoLogin
         LoginDao dao = new LoginDao();
-        boolean loginBerhasil = dao.cekLogin(username, password);
+        boolean loginBerhasil = dao.login(username, password);
 
         if (loginBerhasil) {
             new MainMenu().setVisible(true);
@@ -262,6 +267,7 @@ public class FormLogin extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Username atau Password salah!");
         }
+        reset();
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void tfPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfPasswordActionPerformed

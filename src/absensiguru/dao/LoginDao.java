@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 
 public class LoginDao {
-    public boolean cekLogin(String username, String password) {
+    public boolean login(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
         try (
             Connection conn = Koneksi.konek();
