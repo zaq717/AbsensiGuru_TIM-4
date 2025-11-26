@@ -9,10 +9,20 @@ package absensiguru.model;
  * @author HP
  */
 public class GuruModel {
+
+    private int id;
     private String nip;
     private String nama;
     private String JenisKelamin;
     private String alamat;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNip() {
         return nip;
@@ -45,5 +55,5 @@ public class GuruModel {
     public void setAlamat(String alamat) {
         this.alamat = alamat;
     }
-       
+
 }

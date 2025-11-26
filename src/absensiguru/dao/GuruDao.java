@@ -7,75 +7,99 @@ package absensiguru.dao;
 import absensiguru.helper.Koneksi;
 import absensiguru.model.GuruModel;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author HP
  */
 public class GuruDao {
-    
-    private List<GuruModel> dataGuru = new ArrayList<>();
-    
-    public void insert(GuruModel guru){
-    String sql = "INSERT INTO guru (nip, nama, jenis_kelamin, alamat) VALUES (?, ?, ? ?)";
-        try (Connection conn = Koneksi.konek();
-                PreparedStatement ps = conn.prepareStatement(sql)){
-                ps.setString(1, guru.getNip());
-                ps.setString(2, guru.getNama());
-                ps.setString(3, guru.getJenisKelamin());
-                ps.setString(4, guru.getAlamat());
-                ps.executeUpdate();
-            } catch (SQLException e) {
-            System.err.println("Gagal insert data : " + e.getMessage());
-            }      
-        }
-     public void update(GuruModel guru) {
-        String sql = "UPDATE guru SET nama=?, jenis_kelamin=?, alamat=? WHERE nip=?";
-        try (Connection conn = Koneksi.konek();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, guru.getNama());
-            ps.setString(2, guru.getJenisKelamin());
-            ps.setString(3, guru.getAlamat());
-            ps.setString(4, guru.getNip());
+    public void insert(GuruModel guru) {
+        String sql = "INSERT INTO guru (nip, nama, jenis_kelamin, alamat) VALUES (?, ?, ?, ?)";
+        try (Connection conn = Koneksi.konek(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Menentukan nilai jenis kelamin sesuai database
+            String jK;
+            if (guru.getJenisKelamin().equalsIgnoreCase("Laki-Laki")) {
+                jK = "L";
+            } else if (guru.getJenisKelamin().equalsIgnoreCase("Perempuan")) {
+                jK = "P";
+            } else {
+                jK = null;
+            }
+
+            ps.setString(1, guru.getNip());
+            ps.setString(2, guru.getNama());
+            ps.setString(3, jK);
+            ps.setString(4, guru.getAlamat());
+
             ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Data Berhasil Ditambahkan");
         } catch (SQLException e) {
-            System.err.println("Gagal update data: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Data Gagal Ditambahkan");
         }
     }
 
-    
-    
-    public void delete(String nip){
-        String sql = "DELETE FROM guru WHERE nip=?";
-        try (Connection conn = Koneksi.konek();
-            PreparedStatement ps = conn.prepareStatement(sql)){
-                ps.setString(1, nip);
-                ps.executeUpdate();
-            }catch (SQLException e) {
-                System.err.println("Gagal hapus data : " + e.getMessage());
+    public void update(GuruModel guru) {
+        String sql = "UPDATE guru SET nama = ?, jenis_kelamin = ?, alamat = ? WHERE id_guru = ?";
+
+        try (Connection conn = Koneksi.konek(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Konversi jenis kelamin ke format database
+            String jk;
+            if (guru.getJenisKelamin().equalsIgnoreCase("Laki-laki")) {
+                jk = "L";
+            } else if (guru.getJenisKelamin().equalsIgnoreCase("Perempuan")) {
+                jk = "P";
+            } else {
+                jk = null;
+            }
+
+            // Urutan parameter sesuai query
+            ps.setString(1, guru.getNama());
+            ps.setString(2, jk);
+            ps.setString(3, guru.getAlamat());
+            ps.setInt(4, guru.getId());  // untuk WHERE
+
+            ps.executeUpdate();
+
+            JOptionPane.showMessageDialog(null, "Data Berhasil Diubah");
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Data Gagal Diubah! Error: " + e.getMessage());
         }
     }
-    
-    public List<GuruModel> getAll(){
-        List<GuruModel> list = new ArrayList<>();
+
+    public void delete(GuruModel guru) {
+        String sql = "DELETE FROM guru WHERE id_guru = ?";
+        try (Connection conn = Koneksi.konek(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, guru.getId());
+
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Data Berhasil dihapus");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Data Gagal dihapus");
+        }
+    }
+
+    public ResultSet TampilGuru() {
+        ResultSet rs = null;
         String sql = "SELECT * FROM guru";
-        try (Connection conn = Koneksi.konek();
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sql)){
-        while (rs.next()){
-            GuruModel guru = new GuruModel();
-            guru.setNip(rs.getString("nip"));
-            guru.setNama(rs.getString("nama"));
-            guru.setJenisKelamin(rs.getString("jenis_kelamin"));
-            guru.setAlamat(rs.getString("alamat"));
-            list.add(guru);
-        } 
-       } catch (Exception e) {
-               System.err.println("Gagal tampil data: " + e.getMessage());
-       }
-       return list;
-      }
-   }
+
+        try {
+            Connection conn = Koneksi.konek();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Data gagal ditampilkan: " + e.getMessage(),
+                    "Kesalahan", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return rs;
+    }
+
+}
