@@ -3,7 +3,6 @@ package absensiguru.view;
 import absensiguru.dao.ManajemenDao;
 import absensiguru.model.ManajemenModel;
 import com.formdev.flatlaf.FlatLightLaf;
-import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
@@ -13,44 +12,38 @@ import javax.swing.table.DefaultTableModel;
  * @author HP
  */
 public class ManajemenUser extends javax.swing.JPanel {
-
+    ManajemenDao dao = new ManajemenDao();
+    ManajemenModel m = new ManajemenModel();    
     /**
      * Creates new form Dashboard
      */
     public ManajemenUser() {
+        initComponents();
+        tampildata();
+        reset();
+        
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
         } catch (Exception ex) {
             System.err.println("FlatLaf Error");
         }
-        initComponents();
-        tampildata();
-        reset();
-
+        
     }
-
+    
     private void tampildata() {
-        String[] kolom = {"Username", "Password"};
-        DefaultTableModel model = new DefaultTableModel(null, kolom);
-        tblUser.setModel(model);
-
-        ManajemenDao dao = new ManajemenDao();
-        List<ManajemenModel> list = dao.getall();
-
-        for (ManajemenModel m : list) {
-            Object[] data = {
-                m.getusername(),
-                m.getpassword()
-            };
-            model.addRow(data);
+        try {
+            DefaultTableModel model = dao.tampilData();
+            tblUser.setModel(model);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Data gagal ditampilkan!");
         }
-        tblUser.setModel(model);
     }
-
+    
     private void reset() {
         txtID.setText("");
         tfUsername.setText("");
         tfPassword.setText("");
+        
     }
 
     /**
@@ -258,14 +251,10 @@ public class ManajemenUser extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
-        ManajemenModel m = new ManajemenModel();
         m.setusername(tfUsername.getText());
         m.setpassword(tfPassword.getText());
-
-        ManajemenDao dao = new ManajemenDao();
+        
         dao.insert(m);
-
-        JOptionPane.showMessageDialog(this, "Data berhasil disimpan");
         tampildata();
         reset();
     }//GEN-LAST:event_btnTambahActionPerformed
@@ -273,25 +262,14 @@ public class ManajemenUser extends javax.swing.JPanel {
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
         // TODO add your handling code here:
         int row = tblUser.getSelectedRow();
-        if (row != -1) {
-            // Mengecek apakah ada baris (row) yang dipilih di tabel. 
-            // Jika tidak ada baris yang dipilih, maka nilainya -1, -1 sebagai penanda bahwa tidak ada baris yang sedang dipilih di tabel JTable.
-            String usernameLama = tblUser.getValueAt(row, 0).toString(); // ambil username lama dari tabel
-            String usernameBaru = tfUsername.getText();
-            String passwordBaru = tfPassword.getText();
+        m.setId(Integer.parseInt(tblUser.getValueAt(row, 0).toString()));
+        m.setusername(tfUsername.getText());
+        m.setpassword(tfPassword.getText());
+        
+        dao.update(m);
+        tampildata();
+        reset();
 
-            ManajemenModel m = new ManajemenModel();
-            m.setusername(usernameBaru);
-            m.setpassword(passwordBaru);
-
-            ManajemenDao dao = new ManajemenDao();
-            dao.update(m, usernameLama);
-            tampildata();
-            reset();
-            JOptionPane.showMessageDialog(this, "Data berhasil diubah!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Pilih data yang ingin diubah terlebih dahulu!");
-        }
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
@@ -306,42 +284,26 @@ public class ManajemenUser extends javax.swing.JPanel {
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         // TODO add your handling code here:
-        int row = tblUser.getSelectedRow();
-        if (row != -1) {
-            String username = tblUser.getValueAt(row, 0).toString(); // kolom 0 = username
-
-            int confirm = JOptionPane.showConfirmDialog(this,
-                    "Yakin ingin menghapus user: " + username + " ?",
-                    "Konfirmasi Hapus",
-                    JOptionPane.YES_NO_OPTION);
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                ManajemenModel m = new ManajemenModel();
-                m.setusername(username);
-
-                ManajemenDao dao = new ManajemenDao();
-                dao.delete(m);
-
-                JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
-                tampildata(); // refresh tabel
-                reset();
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus!");
-        }
+        m.setusername(tfUsername.getText());
+        m.setpassword(tfPassword.getText());
+        
+        dao.delete(m);        
+        tampildata();
+        reset();
+        
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void tblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUserMouseClicked
         // TODO add your handling code here:
         int row = tblUser.getSelectedRow();
-        tfUsername.setText(tblUser.getValueAt(row, 0).toString());
-        tfPassword.setText(tblUser.getValueAt(row, 1).toString());
+        tfUsername.setText(tblUser.getValueAt(row, 1).toString());
+        tfPassword.setText(tblUser.getValueAt(row,2).toString());
 
     }//GEN-LAST:event_tblUserMouseClicked
 
     private void tfUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfUsernameActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_tfUsernameActionPerformed
 
 
