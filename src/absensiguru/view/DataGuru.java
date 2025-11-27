@@ -400,13 +400,13 @@ public class DataGuru extends javax.swing.JPanel {
             BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252,
                     BaseFont.NOT_EMBEDDED);
 
-            cb.beginText();
+             cb.beginText();
             cb.setFontAndSize(bf, 12);
 
 
             cb.setColorFill(BaseColor.WHITE);
             
-            float yPos = 50;
+            float yPos = 52;
             
             cb.showTextAligned(
                     Element.ALIGN_CENTER,
@@ -415,6 +415,7 @@ public class DataGuru extends javax.swing.JPanel {
                     yPos, // posisi bawah
                     0
             );
+
 
             cb.endText();
             doc.close();
@@ -457,6 +458,7 @@ public class DataGuru extends javax.swing.JPanel {
 
         loadData();
         resetForm();
+        fNip.setEditable(true);
 
 
     }//GEN-LAST:event_btnUbahActionPerformed
@@ -474,7 +476,7 @@ public class DataGuru extends javax.swing.JPanel {
         gd.delete(g);
         loadData();
         resetForm();
-
+        fNip.setEditable(true);
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void tbDataGuruMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataGuruMouseClicked

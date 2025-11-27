@@ -19,7 +19,13 @@ public class GuruDao {
         String sql = "INSERT INTO guru (nip, nama, jenis_kelamin, alamat) VALUES (?, ?, ?, ?)";
         try (Connection conn = Koneksi.konek(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            // Menentukan nilai jenis kelamin sesuai database
+            // Set kolom NIP: jika kosong → NULL
+            if (guru.getNip() == null || guru.getNip().trim().isEmpty()) {
+                ps.setNull(1, java.sql.Types.VARCHAR);
+            } else {
+                ps.setString(1, guru.getNip());
+            }
+
             String jK;
             if (guru.getJenisKelamin().equalsIgnoreCase("Laki-Laki")) {
                 jK = "L";
@@ -29,7 +35,6 @@ public class GuruDao {
                 jK = null;
             }
 
-            ps.setString(1, guru.getNip());
             ps.setString(2, guru.getNama());
             ps.setString(3, jK);
             ps.setString(4, guru.getAlamat());
@@ -37,8 +42,9 @@ public class GuruDao {
             ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Data Berhasil Ditambahkan");
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Data Gagal Ditambahkan");
+            JOptionPane.showMessageDialog(null, "Data Gagal Ditambahkan: " + e.getMessage());
         }
+
     }
 
     public void update(GuruModel guru) {
