@@ -330,9 +330,9 @@ public class DataGuru extends javax.swing.JPanel {
             String nip = fNip.getText();
             String nama = fNama.getText();
 
-            if (nip.isEmpty() || nama.isEmpty()) {
+            if (nama.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                        "NIP dan Nama harus diisi!");
+                        "Nama harus diisi!");
                 return;
             }
 
@@ -401,7 +401,7 @@ public class DataGuru extends javax.swing.JPanel {
                     BaseFont.NOT_EMBEDDED);
 
              cb.beginText();
-            cb.setFontAndSize(bf, 12);
+            cb.setFontAndSize(bf, 11);
 
 
             cb.setColorFill(BaseColor.WHITE);
@@ -466,6 +466,7 @@ public class DataGuru extends javax.swing.JPanel {
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
         resetForm();
+        fNip.setEditable(true);
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
