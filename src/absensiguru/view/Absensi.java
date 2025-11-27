@@ -130,6 +130,7 @@ public class Absensi extends javax.swing.JPanel {
         });
         tbAbsensi.setViewportView(tblAbsensi);
 
+        txtScan.setEditable(false);
         txtScan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtScanActionPerformed(evt);
