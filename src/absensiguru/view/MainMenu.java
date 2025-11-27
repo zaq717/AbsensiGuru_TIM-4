@@ -659,12 +659,9 @@ Terima kasih....!
                 "Konfirmasi Keluar", JOptionPane.YES_NO_OPTION);
 
         if (response == JOptionPane.YES_OPTION) {
-            // Jika Yes, kembali ke login
-//            new FormLogin().setVisible(true);
+            new FormLogin().setVisible(true);
             dispose(); // Menutup jendela saat ini
         } else if (response == JOptionPane.NO_OPTION) {
-            // Jika No, kembali ke menu terakhir yang dibuka 
-            // Misalnya, membuka kembali JFrame menu terakhir
             this.setVisible(true); // Menampilkan kembali menu yang sedang aktif
         }
     }//GEN-LAST:event_btnLogoutMouseClicked
