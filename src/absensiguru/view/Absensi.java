@@ -79,7 +79,7 @@ public class Absensi extends javax.swing.JPanel {
 
         lbAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 17)); // NOI18N
         lbAbsensi.setForeground(new java.awt.Color(255, 255, 255));
-        lbAbsensi.setText("Absensi");
+        lbAbsensi.setText("Presensi");
 
         javax.swing.GroupLayout barAtasLayout = new javax.swing.GroupLayout(barAtas);
         barAtas.setLayout(barAtasLayout);
@@ -98,7 +98,7 @@ public class Absensi extends javax.swing.JPanel {
         add(barAtas, java.awt.BorderLayout.PAGE_START);
 
         lbDataAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbDataAbsensi.setText("Data Absensi Masuk Hari Ini");
+        lbDataAbsensi.setText("Data Presensi Hari Ini");
 
         lbJamMasukJamPulang.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lbJamMasukJamPulang.setText("Jam Masuk : 07 : 00 : 00 | Jam Pulang : 10 : 30 : 00");
@@ -157,7 +157,7 @@ public class Absensi extends javax.swing.JPanel {
                             .addComponent(tbAbsensi, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
                             .addComponent(txtScan)))
                     .addGroup(pnDasarLayout.createSequentialGroup()
-                        .addGap(205, 205, 205)
+                        .addGap(236, 236, 236)
                         .addComponent(lbDataAbsensi)))
                 .addContainerGap(15, Short.MAX_VALUE))
         );

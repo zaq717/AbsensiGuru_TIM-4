@@ -131,7 +131,7 @@ public class MainMenu extends javax.swing.JFrame {
         btnAbsensi.setBackground(new java.awt.Color(255, 255, 255));
         btnAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnAbsensi.setForeground(new java.awt.Color(255, 255, 255));
-        btnAbsensi.setText("Absensi");
+        btnAbsensi.setText("Presensi");
         btnAbsensi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnAbsensiMouseClicked(evt);
@@ -169,7 +169,7 @@ public class MainMenu extends javax.swing.JFrame {
         btnRekapAbsensi.setBackground(new java.awt.Color(255, 255, 255));
         btnRekapAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnRekapAbsensi.setForeground(new java.awt.Color(255, 255, 255));
-        btnRekapAbsensi.setText("Rekap Absensi");
+        btnRekapAbsensi.setText("Rekap Presensi");
         btnRekapAbsensi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnRekapAbsensiMouseClicked(evt);
