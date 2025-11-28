@@ -356,19 +356,19 @@ public class DataGuru extends javax.swing.JPanel {
             Rectangle ktpSize = new Rectangle(width, height);
 
             //Load Template Kartu
-            Image template = Image.getInstance("src/Image/Template_Presensi.jpeg");
+            Image template = Image.getInstance("src/Image/Template_Presensi2.jpeg");
             template.scaleAbsolute(width, height);
             template.setAbsolutePosition(0f, 0f);
 
             //Load QR
             Image qr = Image.getInstance(qrPath);
-            qr.scaleAbsolute(90, 90);
-            qr.setAbsolutePosition(33, 80); 
+            qr.scaleAbsolute(68, 68);
+            qr.setAbsolutePosition(44, 92); 
 
             //PILIH LOKASI SIMPAN PDF
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Simpan Kartu Guru (PDF)");
-            chooser.setSelectedFile(new File("guru_" + idGuruTerpilih + "_" + nama + ".pdf"));
+            chooser.setSelectedFile(new File("QR_guru_" + idGuruTerpilih + "_" + nama + ".pdf"));
 
             chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
                     "PDF File (*.pdf)", "pdf"));
