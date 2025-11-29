@@ -356,7 +356,7 @@ public class DataGuru extends javax.swing.JPanel {
             Rectangle ktpSize = new Rectangle(width, height);
 
             //Load Template Kartu
-            Image template = Image.getInstance("src/Image/Template_Presensi2.jpeg");
+            Image template = Image.getInstance("src/Image/Template_Presensi.jpg");
             template.scaleAbsolute(width, height);
             template.setAbsolutePosition(0f, 0f);
 
