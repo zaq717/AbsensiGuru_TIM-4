@@ -5,8 +5,6 @@ import javax.swing.UIManager;
 import absensiguru.dao.DasboardDao;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import java.util.Map;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -27,8 +25,6 @@ public class Dashboard extends javax.swing.JPanel {
         initComponents();
         loadData();
     }
-    
-    
 
     private void loadData() {
         DasboardDao ds = new DasboardDao();
@@ -305,7 +301,4 @@ public class Dashboard extends javax.swing.JPanel {
     private javax.swing.JPanel pnUtamaTotalGuru;
     // End of variables declaration//GEN-END:variables
 
-    private int Dtotalguru() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }
