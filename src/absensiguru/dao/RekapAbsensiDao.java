@@ -5,174 +5,135 @@
 package absensiguru.dao;
 
 import absensiguru.helper.Koneksi;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import javax.swing.JOptionPane;
+import java.sql.*;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Lenovo
- */
-public class RekapAbsensiDao  {
+public class RekapAbsensiDao {
 
-    // Method untuk menampilkan data ke tabel
-    public DefaultTableModel loadData() {
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("Nama Guru");
-    model.addColumn("Tanggal");
-    model.addColumn("Jam Masuk");
-    model.addColumn("Jam Pulang");
-    model.addColumn("Status");
+    private Connection conn;
 
-    String sql = "SELECT g.nama AS nama_guru, a.tanggal, a.jam_masuk, a.jam_pulang, a.status  FROM absensi a  JOIN guru g ON a.id_guru = g.id_guru ORDER BY a.tanggal DESC, g.nama ASC";
-
-
-    try (Connection conn = Koneksi.konek();
-         PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-
-        while (rs.next()) {
-            Object[] row = {
-                rs.getString("nama_guru"),
-                rs.getString("tanggal"),
-                rs.getString("jam_masuk"),
-                rs.getString("jam_pulang"),
-                rs.getString("status")
-            };
-            model.addRow(row);
-        }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null,
-                "Gagal menampilkan data: " + e.getMessage(),
-                "Kesalahan", JOptionPane.ERROR_MESSAGE);
-    }
-    return model;
-}
-    public DefaultTableModel cariData(String keyword) {
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("Nama Guru");
-    model.addColumn("Tanggal");
-    model.addColumn("Jam Masuk");
-    model.addColumn("Jam Pulang");
-    model.addColumn("Status");
-
-    String sql = "SELECT g.nama AS nama_guru, a.tanggal, a.jam_masuk, a.jam_pulang, a.status "
-            + "FROM absensi a JOIN guru g ON a.id_guru = g.id_guru "
-            + "WHERE g.nama LIKE ? OR a.tanggal LIKE ? "
-            + "ORDER BY a.tanggal DESC, g.nama ASC";
-
-    try (Connection conn = Koneksi.konek();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-
-        ps.setString(1, "%" + keyword + "%");
-        ps.setString(2, "%" + keyword + "%");
-
-        ResultSet rs = ps.executeQuery();
-
-        while (rs.next()) {
-            Object[] row = {
-                rs.getString("nama_guru"),
-                rs.getString("tanggal"),
-                rs.getString("jam_masuk"),
-                rs.getString("jam_pulang"),
-                rs.getString("status")
-            };
-            model.addRow(row);
-        }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null,
-                "Gagal mencari data: " + e.getMessage(),
-                "Kesalahan", JOptionPane.ERROR_MESSAGE);
+    public RekapAbsensiDao() {
+        conn = Koneksi.konek();
     }
 
-    return model;
-}
- public DefaultTableModel cariData(int bulan, int tahun, int idGuru) {
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("Nama Guru");
-    model.addColumn("Tanggal");
-    model.addColumn("Jam Masuk");
-    model.addColumn("Jam Pulang");
-    model.addColumn("Status");
+    // ----------------- GET TAHUN -----------------
+    public DefaultTableModel getComboTahun() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("tahun");
 
-    String sql = "SELECT g.nama AS nama_guru, a.tanggal, a.jam_masuk, a.jam_pulang, a.status "
-               + "FROM absensi a JOIN guru g ON g.id = a.id_guru "
-               + "WHERE MONTH(a.tanggal) = ? AND YEAR(a.tanggal) = ? AND a.id_guru = ? "
-               + "ORDER BY a.tanggal ASC";
+        String sql = "SELECT DISTINCT YEAR(tanggal) AS tahun FROM absensi ORDER BY tahun DESC";
 
-    try (Connection con = Koneksi.konek();
-         PreparedStatement pst = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
-        pst.setInt(1, bulan);
-        pst.setInt(2, tahun);
-        pst.setInt(3, idGuru);
+            while (rs.next()) {
+                model.addRow(new Object[]{rs.getString("tahun")});
+            }
 
-        ResultSet rs = pst.executeQuery();
-
-        while (rs.next()) {
-            model.addRow(new Object[]{
-                rs.getString("nama_guru"),
-                rs.getString("tanggal"),
-                rs.getString("jam_masuk"),
-                rs.getString("jam_pulang"),
-                rs.getString("status")
-            });
+        } catch (Exception e) {
+            System.out.println("Error getComboTahun: " + e.getMessage());
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        return model;
     }
 
-    return model;
-}
- 
- public DefaultTableModel filterData(int idGuru, int bulan, int tahun) {
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("Nama Guru");
-    model.addColumn("Tanggal");
-    model.addColumn("Jam Masuk");
-    model.addColumn("Jam Pulang");
-    model.addColumn("Status");
+    // ----------------- GET GURU -----------------
+    public DefaultTableModel getComboGuru() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("nama");
 
-    String sql = "SELECT g.nama AS nama_guru, a.tanggal, a.jam_masuk, a.jam_pulang, a.status "
-            + "FROM absensi a JOIN guru g ON a.id_guru = g.id_guru WHERE 1=1 ";
+        String sql = "SELECT nama FROM guru ORDER BY nama ASC";
 
-    if (idGuru != 0) sql += "AND g.id_guru = " + idGuru + " ";
-    if (bulan != 0) sql += "AND MONTH(a.tanggal) = " + bulan + " ";
-    if (tahun != 0) sql += "AND YEAR(a.tanggal) = " + tahun + " ";
+        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
-    sql += "ORDER BY a.tanggal DESC";
+            while (rs.next()) {
+                model.addRow(new Object[]{rs.getString("nama")});
+            }
 
-    try (Connection conn = Koneksi.konek();
-         PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-
-        while (rs.next()) {
-            Object[] row = {
-                rs.getString("nama_guru"),
-                rs.getString("tanggal"),
-                rs.getString("jam_masuk"),
-                rs.getString("jam_pulang"),
-                rs.getString("status")
-            };
-            model.addRow(row);
+        } catch (Exception e) {
+            System.out.println("Error getComboGuru: " + e.getMessage());
         }
 
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null,
-                "Gagal memuat data: " + e.getMessage(),
-                "Kesalahan", JOptionPane.ERROR_MESSAGE);
+        return model;
     }
 
-    return model;
-}
+    // ---------------- GET REKAP ----------------
+    public DefaultTableModel getRekap(String bulan, String tahun, String guru) {
 
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Tanggal");
+        model.addColumn("Jam Masuk");
+        model.addColumn("Jam Pulang");
+        model.addColumn("Status");
 
+        StringBuilder sql = new StringBuilder(
+                "SELECT a.tanggal, a.jam_masuk, a.jam_pulang, a.status "
+                + "FROM absensi a JOIN guru g ON a.id_guru = g.id_guru WHERE 1=1 "
+        );
+
+        // Filter bulan
+        if (!bulan.equals("Semua")) {
+            sql.append(" AND MONTH(a.tanggal) = ").append(convertBulan(bulan));
+        }
+
+        // Filter tahun
+        if (!tahun.equals("Semua")) {
+            sql.append(" AND YEAR(a.tanggal) = ").append(tahun);
+        }
+
+        // Filter guru
+        if (!guru.equals("Semua")) {
+            sql.append(" AND g.nama = '").append(guru).append("'");
+        }
+
+        // Urutkan berdasarkan tanggal
+        sql.append(" ORDER BY a.tanggal ASC");
+
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString()); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getString("tanggal"),
+                    rs.getString("jam_masuk"),
+                    rs.getString("jam_pulang"),
+                    rs.getString("status")
+                });
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error getRekap: " + e.getMessage());
+        }
+
+        return model;
+    }
+
+    // ----------------- KONVERSI BULAN -----------------
+    private int convertBulan(String bulan) {
+        switch (bulan) {
+            case "Januari":
+                return 1;
+            case "Februari":
+                return 2;
+            case "Maret":
+                return 3;
+            case "April":
+                return 4;
+            case "Mei":
+                return 5;
+            case "Juni":
+                return 6;
+            case "Juli":
+                return 7;
+            case "Agustus":
+                return 8;
+            case "September":
+                return 9;
+            case "Oktober":
+                return 10;
+            case "November":
+                return 11;
+            case "Desember":
+                return 12;
+        }
+        return 0;
+    }
 }

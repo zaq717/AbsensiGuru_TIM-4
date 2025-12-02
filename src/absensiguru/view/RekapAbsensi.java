@@ -1,35 +1,80 @@
 package absensiguru.view;
 
-import absensiguru.helper.Koneksi;
-import com.formdev.flatlaf.FlatLightLaf;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import javax.swing.table.DefaultTableModel;
+import absensiguru.dao.GuruDao;
 import absensiguru.dao.RekapAbsensiDao;
-//JasperReports
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.view.JasperViewer;
+import javax.swing.JOptionPane;
+import absensiguru.model.RekapAbsensiModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author HP
  */
 public class RekapAbsensi extends javax.swing.JPanel {
-    public static int statusCari = 0;
+
+    RekapAbsensiDao dao = new RekapAbsensiDao();
+
+    /**
+     * Creates new form Dashboard
+     */
     public RekapAbsensi() {
-        try {
-            UIManager.setLookAndFeel(new FlatLightLaf());
-        } catch (Exception ex) {
-            System.err.println("FlatLaf Error");
-        }
         initComponents();
-        tampildata();
-        loadComboBulan();
-        loadComboTahun();
-        loadComboGuru();
+        loadTahun();
+        loadGuru();
+        loadBulan();
+        loadRekap();
+    }
+
+    public void loadRekap() {
+        RekapAbsensiDao dao = new RekapAbsensiDao();
+
+        String bulan = cbBulan.getSelectedItem().toString();
+        String tahun = cbTahun.getSelectedItem().toString();
+        String guru = cbGuru.getSelectedItem().toString();
+
+        DefaultTableModel model = dao.getRekap(bulan, tahun, guru);
+        tblRekap.setModel(model);
+    }
+
+    private void loadBulan() {
+        cbBulan.removeAllItems();
+        cbBulan.addItem("Semua");
+        cbBulan.addItem("Januari");
+        cbBulan.addItem("Februari");
+        cbBulan.addItem("Maret");
+        cbBulan.addItem("April");
+        cbBulan.addItem("Mei");
+        cbBulan.addItem("Juni");
+        cbBulan.addItem("Juli");
+        cbBulan.addItem("Agustus");
+        cbBulan.addItem("September");
+        cbBulan.addItem("Oktober");
+        cbBulan.addItem("November");
+        cbBulan.addItem("Desember");
+    }
+
+    private void loadTahun() {
+        RekapAbsensiDao dao = new RekapAbsensiDao();
+        DefaultTableModel modelTahun = dao.getComboTahun();
+
+        cbTahun.removeAllItems();
+        cbTahun.addItem("Semua");
+
+        for (int i = 0; i < modelTahun.getRowCount(); i++) {
+            cbTahun.addItem(modelTahun.getValueAt(i, 0).toString());
+        }
+    }
+
+    private void loadGuru() {
+        RekapAbsensiDao dao = new RekapAbsensiDao();
+        DefaultTableModel modelGuru = dao.getComboGuru();
+
+        cbGuru.removeAllItems();
+        cbGuru.addItem("Semua");
+
+        for (int i = 0; i < modelGuru.getRowCount(); i++) {
+            cbGuru.addItem(modelGuru.getValueAt(i, 0).toString());
+        }
     }
 
     /**
@@ -199,67 +244,7 @@ public class RekapAbsensi extends javax.swing.JPanel {
 
         add(pnDasar, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-    RekapAbsensiDao dao = new RekapAbsensiDao();
-    //
-   public void loadComboGuru() {
-    cbGuru.removeAllItems();
-    cbGuru.addItem("Pilih Guru");
 
-    try (Connection conn = Koneksi.konek();
-         PreparedStatement ps = conn.prepareStatement(
-             "SELECT id_guru, nama FROM guru ORDER BY nama ASC"
-         );
-         ResultSet rs = ps.executeQuery()) {
-
-        while (rs.next()) {
-            cbGuru.addItem(rs.getInt("id_guru") + " - " + rs.getString("nama"));
-        }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, 
-            "Gagal memuat data guru: " + e.getMessage());
-    }
-}
-
-
-    public void loadComboBulan() {
-    cbBulan.removeAllItems();
-    cbBulan.addItem("Pilih Bulan");
-
-    String[] bulan = {
-       "1 - Januari", "2 - Februari", "3 - Maret", "4 - April", "5 - Mei", "6 - Juni",
-       "7 - Juli", "8 - Agustus", "9 - September", "10 - Oktober", "11 - November", "12 - Desember"
-            
-    };
-
-    for (String b : bulan) {
-        cbBulan.addItem(b);
-    }
-}
-
-    public void loadComboTahun() {
-    cbTahun.removeAllItems();
-    cbTahun.addItem("Pilih Tahun");
-
-    int tahunSekarang = java.time.Year.now().getValue();
-
-    for (int i = tahunSekarang; i >= 2020; i--) {
-        cbTahun.addItem(String.valueOf(i));
-    }
-}
-
-    
-    private void tampildata() {
-        
-        try {
-            RekapAbsensiDao dao = new RekapAbsensiDao();
-            DefaultTableModel model = dao.loadData();
-            tblRekap.setModel(model);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Data gagal ditampilkan!");
-        
-        }     
-    }
     private void cbGuruActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbGuruActionPerformed
         // TODO add your handling code here:
 
@@ -267,67 +252,16 @@ public class RekapAbsensi extends javax.swing.JPanel {
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
         // TODO add your handling code here:
-        cetakReport();
     }//GEN-LAST:event_btnCetakActionPerformed
-    private void cetakReport() {
-        try {
-            String path = "src/absensiguru/view/rekap_absensi.jrxml";
-            JasperReport jr = JasperCompileManager.compileReport(path);
 
-            //parameter 
-            java.util.Map<String, Object> param = new java.util.HashMap<>();
-            //parameter filter
-            param.put("bulan", cbBulan.getSelectedItem().toString());
-            param.put("tahun", cbTahun.getSelectedItem().toString());
-            param.put("guru", cbGuru.getSelectedItem().toString());
-
-            Connection con = new Koneksi().konek();
-
-            JasperPrint jp = JasperFillManager.fillReport(jr, param, con);
-            JasperViewer.viewReport(jp, false);
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Gagal mencetak laporan : " + e.getMessage());
-        }
-    }
     private void cbTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTahunActionPerformed
         // TODO add your handling code here:
 
     }//GEN-LAST:event_cbTahunActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-        // TODO add your handling code here:
-                                              
-    String guruValue = cbGuru.getSelectedItem().toString();
-    String bulanValue = cbBulan.getSelectedItem().toString();
-    String tahunValue = cbTahun.getSelectedItem().toString();
-
-    int idGuru = 0;
-    int bulan = 0;
-    int tahun = 0;
-
-    // Ambil ID Guru
-    if (!guruValue.equals("Pilih Guru")) {
-        idGuru = Integer.parseInt(guruValue.split(" - ")[0]);
-    }
-
-    // Ambil Bulan (karena format: "6 - Juni")
-    if (!bulanValue.equals("Pilih Bulan")) {
-        bulan = Integer.parseInt(bulanValue.split(" - ")[0]);
-    }
-
-    // Ambil Tahun
-    if (!tahunValue.equals("Pilih Tahun")) {
-        tahun = Integer.parseInt(tahunValue);
-    }
-
-    // Panggil DAO
-    RekapAbsensiDao dao = new RekapAbsensiDao();
-    DefaultTableModel model = dao.filterData(idGuru, bulan, tahun);
-
-    // Tampilkan ke tabel
-    tblRekap.setModel(model);
-
+        // TODO add your handling code here:                                   
+        loadRekap();
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void tblRekapAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tblRekapAncestorAdded
@@ -359,6 +293,5 @@ public class RekapAbsensi extends javax.swing.JPanel {
     private javax.swing.JScrollPane tbRekap;
     private javax.swing.JTable tblRekap;
     // End of variables declaration//GEN-END:variables
-
 
 }
