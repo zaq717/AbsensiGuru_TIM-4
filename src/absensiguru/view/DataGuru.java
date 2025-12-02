@@ -44,7 +44,6 @@ public class DataGuru extends javax.swing.JPanel {
         initComponents();
         resetForm();
         loadData();
-
     }
 
     // Method untuk menampilkan data ke tabel
@@ -92,6 +91,7 @@ public class DataGuru extends javax.swing.JPanel {
         fNama.setText("");
         fAlamat.setText("");
         cbJeniskel.setSelectedItem(null);
+        fNip.setEditable(true);
     }
 
     /**
@@ -441,7 +441,6 @@ public class DataGuru extends javax.swing.JPanel {
         gd.insert(g);
         loadData();
         resetForm();
-
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
@@ -456,9 +455,6 @@ public class DataGuru extends javax.swing.JPanel {
 
         loadData();
         resetForm();
-        fNip.setEditable(true);
-
-
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
@@ -475,7 +471,6 @@ public class DataGuru extends javax.swing.JPanel {
         gd.delete(g);
         loadData();
         resetForm();
-        fNip.setEditable(true);
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void tbDataGuruMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataGuruMouseClicked
