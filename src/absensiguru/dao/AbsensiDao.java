@@ -101,8 +101,8 @@ public class AbsensiDao extends Koneksi {
             LocalTime jamMulaiPulang = LocalTime.of(10, 30, 00);
 
             boolean sudahAbsen = CekAbsenHariIni(idGuru);//cek apakah sudah absen hari ini
-
-            if (!sudahAbsen) {//absen masuk
+            //absen masuk
+            if (!sudahAbsen) {
                 //jika waktu sekarang sebelum waktu absen masuk
                 if (waktuSekarang.isBefore(jamAwalMasuk)) {
                     notifikasi("Belum waktunya absen masuk!",
@@ -118,7 +118,8 @@ public class AbsensiDao extends Koneksi {
                 notifikasi("Absensi masuk berhasil!",
                         "Berhasil", JOptionPane.INFORMATION_MESSAGE, 2000);
                 return;
-            }//absen pulang
+            }
+            //absen pulang
             if (am.getJamPulang() != null) {//jika absen pulang sudah terisi maka sudah absen pulang
                 notifikasi("Anda sudah absen pulang hari ini!",
                         "Peringatan", JOptionPane.WARNING_MESSAGE, 2000);
