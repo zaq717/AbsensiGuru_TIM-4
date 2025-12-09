@@ -5,6 +5,15 @@ import absensiguru.dao.RekapAbsensiDao;
 import javax.swing.JOptionPane;
 import absensiguru.model.RekapAbsensiModel;
 import javax.swing.table.DefaultTableModel;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import java.awt.Desktop;
+import java.io.FilterOutputStream;
+import java.io.File;
+import java.awt.print.PrinterAbortException;
+import javax.swing.JLabel;
+import java.text.MessageFormat;
+        
 
 /**
  *
@@ -252,11 +261,38 @@ public class RekapAbsensi extends javax.swing.JPanel {
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
         // TODO add your handling code here:
+        if (cbBulan.getSelectedItem() == null
+                || cbTahun.getSelectedItem() == null
+                || cbGuru.getSelectedItem() == null) {
+           
+            JOptionPane.showMessageDialog(null, 
+                    "Silahkan pilih Bulan, Tahun Dan Guru terlebih dahulu.");
+            return;
+        }
+        String bulan = cbBulan.getSelectedItem().toString();
+        String tahun = cbTahun.getSelectedItem().toString();
+        String guru = cbGuru.getSelectedItem().toString();
+        
+        if (tblRekap.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(null, 
+                    "Tidak ada data pada tabel. Tekan tombol 'Cari' terlebih dahulu.");
+            
+            return; 
+        }
+        RekapAbsensiDao dao = new  RekapAbsensiDao();
+        
+        try {
+            dao.cetakOtomatis(guru, bulan, tahun, tblRekap);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, 
+                    "Gagal mencetak PDF: " + e.getMessage());
+        }
+
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void cbTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTahunActionPerformed
         // TODO add your handling code here:
-
+        
     }//GEN-LAST:event_cbTahunActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
