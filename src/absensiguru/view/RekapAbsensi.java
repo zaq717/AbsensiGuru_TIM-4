@@ -13,7 +13,6 @@ import java.io.File;
 import java.awt.print.PrinterAbortException;
 import javax.swing.JLabel;
 import java.text.MessageFormat;
-        
 
 /**
  *
@@ -260,43 +259,56 @@ public class RekapAbsensi extends javax.swing.JPanel {
     }//GEN-LAST:event_cbGuruActionPerformed
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-        // TODO add your handling code here:
-        if (cbBulan.getSelectedItem() == null
-                || cbTahun.getSelectedItem() == null
-                || cbGuru.getSelectedItem() == null) {
-           
-            JOptionPane.showMessageDialog(null, 
-                    "Silahkan pilih Bulan, Tahun Dan Guru terlebih dahulu.");
-            return;
-        }
+        // TODO add your handling code here:                                                                                 
+
         String bulan = cbBulan.getSelectedItem().toString();
         String tahun = cbTahun.getSelectedItem().toString();
         String guru = cbGuru.getSelectedItem().toString();
-        
-        if (tblRekap.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(null, 
-                    "Tidak ada data pada tabel. Tekan tombol 'Cari' terlebih dahulu.");
-            
-            return; 
+
+        // 1. Jika bulan dan tahun belum dipilih → tampilkan pesan
+        if (bulan.equals("Semua") || tahun.equals("Semua")) {
+            JOptionPane.showMessageDialog(null,
+                    "Silahkan pilih bulan dan tahun terlebih dahulu.");
+            return;
         }
-        RekapAbsensiDao dao = new  RekapAbsensiDao();
-        
+
+        // 2. Jika bulan & tahun dipilih, tetapi guru = Semua → cetak semua guru
+        if (guru.equals("Semua")) {
+            guru = "SEMUA_GURU";
+            // nilai khusus supaya DAO mengerti bahwa guru = all
+        }
+
+        // 3. Jika hanya guru yang dipilih tetapi bulan/tahun belum dipilih
+        //    (Sudah ditangani oleh if pertama)
+        //    Jadi tidak perlu kode tambahan
+        // 4. Jika tabel kosong
+        if (tblRekap.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(null,
+                    "Tidak ada data pada tabel. Tekan tombol 'Cari' terlebih dahulu.");
+            return;
+        }
+
+        // 5. Membuat objek DAO
+        RekapAbsensiDao dao = new RekapAbsensiDao();
+
+        // 6. Eksekusi cetak PDF
         try {
             dao.cetakOtomatis(guru, bulan, tahun, tblRekap);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(null,
                     "Gagal mencetak PDF: " + e.getMessage());
         }
+
 
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void cbTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTahunActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_cbTahunActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-        // TODO add your handling code here:                                   
+        // TODO add your handling code here:                                    
         loadRekap();
     }//GEN-LAST:event_btnCariActionPerformed
 
