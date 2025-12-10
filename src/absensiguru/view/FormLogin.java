@@ -160,7 +160,7 @@ public class FormLogin extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setText("MI NURUL HUDA III");
 
-        jLabel5.setText("Sistem Absensi Guru");
+        jLabel5.setText("Sistem Presensi Pendidik");
 
         javax.swing.GroupLayout pnDasarLayout = new javax.swing.GroupLayout(pnDasar);
         pnDasar.setLayout(pnDasarLayout);
@@ -187,7 +187,7 @@ public class FormLogin extends javax.swing.JFrame {
                         .addGap(112, 112, 112)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnDasarLayout.createSequentialGroup()
-                        .addGap(93, 93, 93)
+                        .addGap(81, 81, 81)
                         .addComponent(jLabel5)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -210,7 +210,7 @@ public class FormLogin extends javax.swing.JFrame {
                 .addComponent(tfPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
 
         getContentPane().add(pnDasar, java.awt.BorderLayout.CENTER);
