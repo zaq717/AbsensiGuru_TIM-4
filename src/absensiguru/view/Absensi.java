@@ -45,7 +45,7 @@ public class Absensi extends javax.swing.JPanel {
         try {
             ResultSet result = dao.getAbsensiHariIni();//memanggil method getAbsenHariIni
             while (result.next()) {
-                    //memanggil baris data dalam database ke JTable
+                //memanggil baris data dalam database ke JTable
                 model.addRow(new Object[]{
                     result.getString("nama_guru"),
                     result.getString("tanggal"),
@@ -130,7 +130,6 @@ public class Absensi extends javax.swing.JPanel {
         });
         tbAbsensi.setViewportView(tblAbsensi);
 
-        txtScan.setEditable(false);
         txtScan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtScanActionPerformed(evt);
@@ -192,7 +191,6 @@ public class Absensi extends javax.swing.JPanel {
         // TODO add your handling code here:
         String dataQR = txtScan.getText();
 
-
         try {
             String idGuru = dao.ambilDariQR(dataQR);
 
@@ -205,7 +203,6 @@ public class Absensi extends javax.swing.JPanel {
 
         txtScan.setText("");
         txtScan.requestFocusInWindow();
-
     }//GEN-LAST:event_txtScanActionPerformed
 
     private void txtScanKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtScanKeyPressed

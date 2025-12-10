@@ -82,6 +82,8 @@ public class AbsensiDao extends Koneksi {
     private void absenMasuk(String idGuru) throws SQLException {
         Query = "INSERT INTO absensi (id_guru, jam_masuk, status, tanggal) VALUES (?, CURTIME(), 'Hadir Tidak Lengkap', CURDATE())";
         ps = koneksi.prepareStatement(Query);
+        ps.setString(1, idGuru);
+        ps.executeUpdate();
     }
 
     private void absenPulang(String idGuru) throws SQLException {
@@ -140,6 +142,7 @@ public class AbsensiDao extends Koneksi {
     }
 
     public String ambilDariQR(String dataQR) {
+        //contoh QR: "ID:4|Nama:Ahmad"
         String[] parts = dataQR.split("\\|");
         for (String part : parts) {
             if (part.startsWith("ID:")) {
