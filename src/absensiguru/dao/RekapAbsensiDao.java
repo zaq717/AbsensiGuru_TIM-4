@@ -243,7 +243,7 @@ public class RekapAbsensiDao {
 
         // ===== Garis bawah header =====
         Paragraph garis = new Paragraph("______________________________________________________________________________");
-        garis.setSpacingBefore(5f);
+        garis.setSpacingBefore(-5f); // Dikurangi agar garis lebih dekat dengan tulisan di atasnya
         garis.setSpacingAfter(5f); // Dikurangi agar garis lebih dekat dengan tabel
         doc.add(garis);
 
