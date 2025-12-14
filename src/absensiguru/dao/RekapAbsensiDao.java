@@ -10,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+import java.io.File;
 import javax.swing.JTable;
 import java.io.FileOutputStream;
 import javax.swing.JFileChooser;
@@ -24,13 +25,10 @@ public class RekapAbsensiDao {
         conn = Koneksi.konek();
     }
 
-    // ====================== GET TAHUN ======================
     public DefaultTableModel getComboTahun() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("tahun");
-
         String sql = "SELECT DISTINCT YEAR(tanggal) AS tahun FROM absensi ORDER BY tahun DESC";
-
         try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 model.addRow(new Object[]{rs.getString("tahun")});
@@ -41,13 +39,10 @@ public class RekapAbsensiDao {
         return model;
     }
 
-    // ====================== GET GURU ======================
     public DefaultTableModel getComboGuru() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("nama");
-
         String sql = "SELECT nama FROM guru ORDER BY nama ASC";
-
         try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 model.addRow(new Object[]{rs.getString("nama")});
@@ -58,23 +53,30 @@ public class RekapAbsensiDao {
         return model;
     }
 
-    // ====================== GET REKAP DETAIL ======================
-    public DefaultTableModel getRekap(String bulan, String tahun, String guru) {
+    private String getTahunAjaran(String bulan, String tahun) {
+        int bulanAngka = convertBulan(bulan);
+        int tahunInt = Integer.parseInt(tahun);
 
+        if (bulanAngka >= 7) { // Juli - Desember
+            return tahunInt + "/" + (tahunInt + 1);
+        } else { // Januari - Juni
+            return (tahunInt - 1) + "/" + tahunInt;
+        }
+    }
+
+    public DefaultTableModel getRekap(String bulan, String tahun, String guru) {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Tanggal");
         model.addColumn("Nama Guru");
         model.addColumn("Jam Masuk");
         model.addColumn("Jam Pulang");
         model.addColumn("Status");
-
         StringBuilder sql = new StringBuilder(
                 "SELECT a.tanggal, g.nama, a.jam_masuk, a.jam_pulang, a.status "
                 + "FROM absensi a "
                 + "JOIN guru g ON a.id_guru = g.id_guru "
                 + "WHERE 1=1 "
         );
-
         // Filter Bulan
         if (!bulan.equals("Semua")) {
             sql.append(" AND MONTH(a.tanggal) = ").append(convertBulan(bulan));
@@ -87,11 +89,8 @@ public class RekapAbsensiDao {
         if (!guru.equals("Semua")) {
             sql.append(" AND g.nama = '").append(guru).append("'");
         }
-
         sql.append(" ORDER BY a.tanggal ASC");
-
         try (PreparedStatement ps = conn.prepareStatement(sql.toString()); ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
                 model.addRow(new Object[]{
                     rs.getString("tanggal"),
@@ -101,41 +100,32 @@ public class RekapAbsensiDao {
                     rs.getString("status")
                 });
             }
-
         } catch (Exception e) {
             System.out.println("Error getRekap: " + e.getMessage());
         }
-
         return model;
     }
 
-    // ====================== GET REKAP TOTAL (PER GURU) ======================
     public DefaultTableModel getRekapTotal(String bulan, String tahun) {
-
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("No");
         model.addColumn("Nama Guru");
         model.addColumn("Hadir Lengkap");
         model.addColumn("Hadir Tidak Lengkap");
-
         StringBuilder sql = new StringBuilder(
                 "SELECT g.nama, "
                 + "SUM(CASE WHEN a.status = 'Hadir Lengkap' THEN 1 ELSE 0 END) AS lengkap, "
                 + "SUM(CASE WHEN a.status = 'Hadir Tidak Lengkap' THEN 1 ELSE 0 END) AS tidak_lengkap "
                 + "FROM guru g LEFT JOIN absensi a ON g.id_guru = a.id_guru WHERE 1=1"
         );
-
         if (!bulan.equals("Semua")) {
             sql.append(" AND MONTH(a.tanggal) = ").append(convertBulan(bulan));
         }
         if (!tahun.equals("Semua")) {
             sql.append(" AND YEAR(a.tanggal) = ").append(tahun);
         }
-
         sql.append(" GROUP BY g.nama ORDER BY g.nama ASC");
-
         try (PreparedStatement ps = conn.prepareStatement(sql.toString()); ResultSet rs = ps.executeQuery()) {
-
             int no = 1;
             while (rs.next()) {
                 model.addRow(new Object[]{
@@ -145,15 +135,12 @@ public class RekapAbsensiDao {
                     rs.getInt("tidak_lengkap")
                 });
             }
-
         } catch (Exception e) {
             System.out.println("Error getRekapTotal: " + e.getMessage());
         }
-
         return model;
     }
 
-    // ----------------- KONVERSI BULAN -----------------
     private int convertBulan(String bulan) {
         switch (bulan) {
             case "Januari":
@@ -184,256 +171,254 @@ public class RekapAbsensiDao {
         return 0;
     }
 
-    public void cetakOtomatis(String guru, String bulan, String tahun, JTable table) {
-        if (guru == null || bulan == null || tahun == null || table == null) {
-            JOptionPane.showMessageDialog(null, "Parameter cetak otomatis tidak valid.");
+    public void cetakOtomatis(String guru, String bulan, String tahun, JTable tableDetail) {
+        String g = guru.trim().toUpperCase();
+        if (g.contains("SEMUA")) {
+            // CETAK REKAP TOTAL SEMUA GURU
+            cetakRekapSemuaGuruRekapTotal(bulan, tahun);
+        } else {
+            // CETAK DETAIL PER GURU
+            cetakRekapPerGuru(guru, bulan, tahun, tableDetail);
+        }
+    }
+
+public void cetakRekapPerGuru(String guru, String bulan, String tahun, JTable table) {
+    try {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Simpan Rekap Per Guru");
+        chooser.setSelectedFile(new java.io.File("Rekap_" + guru.replaceAll("\\s+", "_") + "_" + bulan + "_" + tahun + ".pdf"));
+
+        int userOption = chooser.showSaveDialog(null);
+        if (userOption != JFileChooser.APPROVE_OPTION) {
             return;
         }
 
-        try {
-            if (guru.equalsIgnoreCase("Semua")) {
-                cetakRekapSemuaGuru(bulan, tahun, table);
-            } else {
-                cetakRekapPerGuru(guru, bulan, tahun, table);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error cetak otomatis: " + e.toString());
+        String fileName = chooser.getSelectedFile().getAbsolutePath();
+        if (!fileName.toLowerCase().endsWith(".pdf")) {
+            fileName += ".pdf";
         }
-    }
 
-    public void cetakRekapPerGuru(String guru, String bulan, String tahun, JTable table) {
+        Document doc = new Document(PageSize.A4);
+        PdfWriter.getInstance(doc, new FileOutputStream(fileName));
+        doc.open();
+
+        // ==================== HEADER LENGKAP =====================
+        PdfPTable headerTable = new PdfPTable(2);
+        headerTable.setWidthPercentage(100);
+        headerTable.setWidths(new float[]{20, 80});
+
+        // LOGO
         try {
+            Image logo = Image.getInstance(getClass().getResource("/Image/LOGO_Rekap.jpeg"));
+            logo.scaleToFit(70, 70);
 
-            JFileChooser chooser = new JFileChooser();
-            chooser.setDialogTitle("Simpan Rekap Per Guru");
-            chooser.setSelectedFile(new java.io.File("Rekap_" + guru.replaceAll("\\s+", "_") + "_" + bulan + "_" + tahun + ".pdf"));
-
-            int userOption = chooser.showSaveDialog(null);
-            if (userOption != JFileChooser.APPROVE_OPTION) {
-                return;
-            }
-
-            String fileName = chooser.getSelectedFile().getAbsolutePath();
-            if (!fileName.toLowerCase().endsWith(".pdf")) {
-                fileName += ".pdf";
-            }
-
-            Document doc = new Document(PageSize.A4);
-            PdfWriter.getInstance(doc, new FileOutputStream(fileName));
-            doc.open();
-
-            // ==================== HEADER LENGKAP =====================
-            PdfPTable headerTable = new PdfPTable(2);
-            headerTable.setWidthPercentage(100);
-            headerTable.setWidths(new float[]{20, 80});
-
-            // LOGO
-            try {
-                Image logo = Image.getInstance(getClass().getResource("/Image/Logo_MI.png"));
-                logo.scaleToFit(70, 70);
-
-                PdfPCell cellLogo = new PdfPCell(logo);
-                cellLogo.setBorder(Rectangle.NO_BORDER);
-                cellLogo.setHorizontalAlignment(Element.ALIGN_LEFT);
-                headerTable.addCell(cellLogo);
-            } catch (Exception e) {
-                PdfPCell empty = new PdfPCell(new Phrase(""));
-                empty.setBorder(Rectangle.NO_BORDER);
-                headerTable.addCell(empty);
-            }
-
-            // JUDUL SAMPING LOGO
-            Font titleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
-            Font subFont = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
-
-            Paragraph judul = new Paragraph(
-                    "DAFTAR HADIR GURU MI NURUL HUDA III\n"
-                    + "TAHUN AJARAN 2025/2026\n"
-                    + "BULAN " + bulan.toUpperCase() + " " + tahun,
-                    titleFont
-            );
-            judul.setAlignment(Element.ALIGN_RIGHT);
-
-            PdfPCell cellJudul = new PdfPCell(judul);
-            cellJudul.setBorder(Rectangle.NO_BORDER);
-            cellJudul.setVerticalAlignment(Element.ALIGN_RIGHT);
-            headerTable.addCell(cellJudul);
-
-            doc.add(headerTable);
-
-            // ===== Garis bawah header =====
-            doc.add(new Paragraph("______________________________________________________________________________\n\n"));
-
-            // ===========================================================
-            Font normal = new Font(Font.FontFamily.HELVETICA, 11);
-            Font headerFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
-
-            doc.add(new Paragraph("Nama Guru : " + guru + "\n\n", normal));
-
-            PdfPTable pdfTable = new PdfPTable(4);
-            pdfTable.setWidthPercentage(100);
-            pdfTable.setSpacingBefore(8f);
-            pdfTable.setSpacingAfter(8f);
-
-            String[] headers = {"NO", "JUMLAH HADIR LENGKAP", "JUMLAH HADIR LENGKAP TIDAK LENGKAP", "STATUS"};
-            for (String h : headers) {
-                PdfPCell c = new PdfPCell(new Phrase(h, headerFont));
-                c.setHorizontalAlignment(Element.ALIGN_CENTER);
-                c.setPadding(5);
-                c.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                pdfTable.addCell(c);
-            }
-
-            int lengkap = 0, tidak = 0;
-
-            TableModel model = table.getModel();
-            for (int i = 0; i < model.getRowCount(); i++) {
-                String tgl = model.getValueAt(i, 0) != null ? model.getValueAt(i, 0).toString() : "";
-                String jm = model.getValueAt(i, 1) != null ? model.getValueAt(i, 1).toString() : "";
-                String jp = model.getValueAt(i, 2) != null ? model.getValueAt(i, 2).toString() : "";
-                String st = model.getValueAt(i, 3) != null ? model.getValueAt(i, 3).toString() : "";
-
-                pdfTable.addCell(new PdfPCell(new Phrase(tgl, normal)));
-                pdfTable.addCell(new PdfPCell(new Phrase(jm, normal)));
-                pdfTable.addCell(new PdfPCell(new Phrase(jp, normal)));
-                pdfTable.addCell(new PdfPCell(new Phrase(st, normal)));
-
-                if (st.equalsIgnoreCase("Hadir Lengkap")) {
-                    lengkap++;
-                } else if (st.equalsIgnoreCase("Hadir Tidak Lengkap")) {
-                    tidak++;
-                }
-            }
-
-            doc.add(pdfTable);
-            doc.add(new Paragraph("Jumlah Hadir Lengkap : " + lengkap, normal));
-            doc.add(new Paragraph("Jumlah Tidak Lengkap : " + tidak, normal));
-
-            doc.close();
-            JOptionPane.showMessageDialog(null, "PDF berhasil disimpan:\n" + fileName);
-
+            PdfPCell cellLogo = new PdfPCell(logo);
+            cellLogo.setBorder(Rectangle.NO_BORDER);
+            cellLogo.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellLogo.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            headerTable.addCell(cellLogo);
         } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error PDF Per Guru: " + e.toString());
+            PdfPCell empty = new PdfPCell(new Phrase(""));
+            empty.setBorder(Rectangle.NO_BORDER);
+            headerTable.addCell(empty);
         }
-    }
 
-    public void cetakRekapSemuaGuru(String bulan, String tahun, JTable table) {
+        // JUDUL SAMPING LOGO
+        Font titleFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
+
+        Paragraph judul = new Paragraph();
+        judul.add(new Phrase("DAFTAR HADIR GURU MI NURUL HUDA III\n", titleFont));
+        judul.add(new Phrase("TAHUN AJARAN 2025/2026\n", titleFont));
+        judul.add(new Phrase("BULAN " + bulan.toUpperCase() + " " + tahun, titleFont));
+        judul.setAlignment(Element.ALIGN_CENTER);
+
+        PdfPCell cellJudul = new PdfPCell(judul);
+        cellJudul.setBorder(Rectangle.NO_BORDER);
+        cellJudul.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cellJudul.setHorizontalAlignment(Element.ALIGN_CENTER);
+        headerTable.addCell(cellJudul);
+
+        doc.add(headerTable);
+
+        // ===== Garis bawah header =====
+        Paragraph garis = new Paragraph("______________________________________________________________________________");
+        garis.setSpacingBefore(10f);
+        garis.setSpacingAfter(13f);
+        doc.add(garis);
+
+        // ===========================================================
+        Font normal = new Font(Font.FontFamily.HELVETICA, 11);
+        Font headerFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
+
+        // TABEL UNTUK GURU SPESIFIK
+        doc.add(new Paragraph("Nama Guru: " + guru + "\n\n", normal));
+
+        // Tabel dengan 4 kolom (tanpa STATUS)
+        PdfPTable pdfTable = new PdfPTable(4);
+        pdfTable.setWidthPercentage(100);
+        pdfTable.setWidths(new float[]{25, 30, 20, 25}); // Proporsi kolom
+        pdfTable.setSpacingBefore(5f);
+        pdfTable.setSpacingAfter(10f);
+
+        // Header tabel
+        String[] headers = {"TANGGAL", "NAMA GURU", "JAM MASUK", "JAM PULANG"};
+        for (String h : headers) {
+            PdfPCell c = new PdfPCell(new Phrase(h, headerFont));
+            c.setHorizontalAlignment(Element.ALIGN_CENTER);
+            c.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            c.setPadding(8);
+            c.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            pdfTable.addCell(c);
+        }
+
+        int lengkap = 0, tidak = 0;
+
+        // Data tabel
+        TableModel model = table.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            // Sesuai dengan getRekap(): kolom 0=Tanggal, 1=Nama Guru, 2=Jam Masuk, 3=Jam Pulang, 4=Status
+            String tgl = model.getValueAt(i, 0) != null ? model.getValueAt(i, 0).toString() : "";
+            String namaGuru = model.getValueAt(i, 1) != null ? model.getValueAt(i, 1).toString() : "";
+            String jm = model.getValueAt(i, 2) != null ? model.getValueAt(i, 2).toString() : "";
+            String jp = model.getValueAt(i, 3) != null ? model.getValueAt(i, 3).toString() : "";
+            String st = model.getValueAt(i, 4) != null ? model.getValueAt(i, 4).toString() : "";
+
+            // Tanggal
+            PdfPCell cellTgl = new PdfPCell(new Phrase(tgl, normal));
+            cellTgl.setPadding(5);
+            pdfTable.addCell(cellTgl);
+
+            // Nama Guru (dari data tabel)
+            PdfPCell cellGuru = new PdfPCell(new Phrase(namaGuru, normal));
+            cellGuru.setPadding(5);
+            pdfTable.addCell(cellGuru);
+
+            // Jam Masuk
+            PdfPCell cellJM = new PdfPCell(new Phrase(jm, normal));
+            cellJM.setPadding(5);
+            pdfTable.addCell(cellJM);
+
+            // Jam Pulang
+            PdfPCell cellJP = new PdfPCell(new Phrase(jp, normal));
+            cellJP.setPadding(5);
+            pdfTable.addCell(cellJP);
+
+            // Hitung status
+            if (st.equalsIgnoreCase("Hadir Lengkap")) {
+                lengkap++;
+            } else if (st.equalsIgnoreCase("Hadir Tidak Lengkap")) {
+                tidak++;
+            }
+        }
+
+        doc.add(pdfTable);
+        
+        // Ringkasan
+        doc.add(new Paragraph("\nJumlah Hadir Lengkap: " + lengkap, normal));
+        doc.add(new Paragraph("Jumlah Hadir Tidak Lengkap: " + tidak, normal));
+
+        doc.close();
+        JOptionPane.showMessageDialog(null, "PDF berhasil disimpan:\n" + fileName);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error PDF Per Guru: " + e.toString());
+    }
+}
+
+    public void cetakRekapSemuaGuruRekapTotal(String bulan, String tahun) {
         try {
 
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Simpan Rekap Semua Guru");
-            chooser.setSelectedFile(new java.io.File("Rekap_Semua_Guru_" + bulan + "_" + tahun + ".pdf"));
+            chooser.setSelectedFile(
+                    new File("Rekap_Semua_Guru_" + bulan + "_" + tahun + ".pdf")
+            );
 
-            int userOption = chooser.showSaveDialog(null);
-            if (userOption != JFileChooser.APPROVE_OPTION) {
+            if (chooser.showSaveDialog(null) != JFileChooser.APPROVE_OPTION) {
                 return;
             }
 
             String fileName = chooser.getSelectedFile().getAbsolutePath();
-            if (!fileName.toLowerCase().endsWith(".pdf")) {
+            if (!fileName.endsWith(".pdf")) {
                 fileName += ".pdf";
             }
 
-            Document doc = new Document(PageSize.A4.rotate());
+            Document doc = new Document(PageSize.A4.rotate(), 36, 36, 36, 36);
             PdfWriter.getInstance(doc, new FileOutputStream(fileName));
             doc.open();
-            
-            
-            
-            
-            
-
-            // ==================== HEADER =====================
+            //header
             PdfPTable header = new PdfPTable(3);
             header.setWidthPercentage(100);
             header.setWidths(new float[]{20, 60, 20});
-
-// 1. LOGO KIRI
             try {
-    URL imgUrl = getClass().getResource("/Image/Logo_MI.png");
-    if (imgUrl != null) {
-        Image logo = Image.getInstance(imgUrl);
-        logo.scaleToFit(70, 70);
-
-        PdfPCell cellLogo = new PdfPCell(logo);
-        cellLogo.setBorder(Rectangle.NO_BORDER);
-        cellLogo.setHorizontalAlignment(Element.ALIGN_CENTER);
-
-        header.addCell(cellLogo);
-    } else {
-        // Jika gambar tidak ditemukan
-        header.addCell(new PdfPCell(new Phrase("LOGO TIDAK DITEMUKAN")));
-    }
-} catch (Exception e) {
-    e.printStackTrace();
-    header.addCell(new PdfPCell(new Phrase("ERROR LOGO")));
-}
-
-
-// 2. TULISAN TENGAH (RATA TENGAH)
+                Image logo = Image.getInstance(getClass().getResource("/Image/LOGO_Rekap.jpeg"));
+                logo.scaleToFit(70, 70);
+                PdfPCell cellLogo = new PdfPCell(logo);
+                cellLogo.setBorder(Rectangle.NO_BORDER);
+                header.addCell(cellLogo);
+            } catch (Exception e) {
+                header.addCell(new PdfPCell(new Phrase("")));
+            }
+            String tahunAjaran = getTahunAjaran(bulan, tahun);
             Paragraph title = new Paragraph(
                     "DAFTAR HADIR GURU MI NURUL HUDA III\n"
-                    + "TAHUN AJARAN 2025/2026\n"
+                    + "TAHUN AJARAN " + tahunAjaran + "\n"
                     + "BULAN " + bulan.toUpperCase() + " " + tahun,
                     new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD)
             );
-            PdfPCell cellTitle = new PdfPCell(title);
-            cellTitle.setBorder(Rectangle.NO_BORDER);
-            cellTitle.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cellTitle.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            header.addCell(cellTitle);
-
-// 3. KOLOM KANAN DIKOSONGI
-            header.addCell(makeCell("", Element.ALIGN_CENTER, Rectangle.NO_BORDER));
-
+            PdfPCell titleCell = new PdfPCell(title);
+            titleCell.setBorder(Rectangle.NO_BORDER);
+            titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            header.addCell(titleCell);
+            PdfPCell emptyCell = new PdfPCell(new Phrase(""));
+            emptyCell.setBorder(Rectangle.NO_BORDER);
+            header.addCell(emptyCell);
             doc.add(header);
-
-// GARIS PEMBATAS SEPERTI GAMBAR
-            doc.add(new Paragraph("_____________________________________________________________\n\n"));
-
-            
-            
-            
-            
-            // =======================================================
-            Font normal = new Font(Font.FontFamily.HELVETICA, 11);
+            doc.add(new Paragraph("___________________________________________________________________________________________________________________\n\n"));
+            DefaultTableModel model = getRekapTotal(bulan, tahun);
+            PdfPTable table = new PdfPTable(4);
+            table.setWidthPercentage(100);
+            table.setWidths(new float[]{2, 10, 10, 10});
             Font headerFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
+            Font normalFont = new Font(Font.FontFamily.HELVETICA, 11);
+            String[] headers = {
+                "NO",
+                "NAMA GURU",
+                "JUMLAH HADIR LENGKAP",
+                "JUMLAH HADIR TIDAK LENGKAP"
+            };
 
-            TableModel model = table.getModel();
-            int cols = model.getColumnCount();
-
-            PdfPTable pdf = new PdfPTable(cols);
-            pdf.setWidthPercentage(100);
-
-            for (int c = 0; c < cols; c++) {
-                PdfPCell ch = new PdfPCell(new Phrase(model.getColumnName(c), headerFont));
-                ch.setHorizontalAlignment(Element.ALIGN_CENTER);
-                ch.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                ch.setPadding(4);
-                pdf.addCell(ch);
+            for (String h : headers) {
+                PdfPCell cell = new PdfPCell(new Phrase(h, headerFont));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                cell.setPadding(6);
+                table.addCell(cell);
             }
 
-            for (int r = 0; r < model.getRowCount(); r++) {
-                for (int c = 0; c < cols; c++) {
-                    Object val = model.getValueAt(r, c);
-                    pdf.addCell(new PdfPCell(new Phrase(val != null ? val.toString() : "", normal)));
-                }
+            for (int i = 0; i < model.getRowCount(); i++) {
+                table.addCell(makeCell(model.getValueAt(i, 0).toString(), Element.ALIGN_CENTER));
+                table.addCell(makeCell(model.getValueAt(i, 1).toString(), Element.ALIGN_LEFT));
+                table.addCell(makeCell(model.getValueAt(i, 2).toString(), Element.ALIGN_CENTER));
+                table.addCell(makeCell(model.getValueAt(i, 3).toString(), Element.ALIGN_CENTER));
             }
 
-            doc.add(pdf);
+            doc.add(table);
             doc.close();
-            JOptionPane.showMessageDialog(null, "PDF berhasil disimpan:\n" + fileName);
-
+            JOptionPane.showMessageDialog(null, "PDF Rekap Semua Guru berhasil dibuat");
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error rekap semua guru: " + e.toString());
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
     }
 
-    private PdfPCell makeCell(String string, int ALIGN_CENTER, int NO_BORDER) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private PdfPCell makeCell(String text, int align) {
+        PdfPCell cell = new PdfPCell(new Phrase(text));
+        cell.setHorizontalAlignment(align);
+        cell.setPadding(5);
+        return cell;
     }
+
 }

@@ -1,18 +1,8 @@
 package absensiguru.view;
 
-import absensiguru.dao.GuruDao;
 import absensiguru.dao.RekapAbsensiDao;
 import javax.swing.JOptionPane;
-import absensiguru.model.RekapAbsensiModel;
 import javax.swing.table.DefaultTableModel;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.*;
-import java.awt.Desktop;
-import java.io.FilterOutputStream;
-import java.io.File;
-import java.awt.print.PrinterAbortException;
-import javax.swing.JLabel;
-import java.text.MessageFormat;
 
 /**
  *
