@@ -231,12 +231,14 @@ public class RekapAbsensiDao {
         judul.add(new Phrase("DAFTAR HADIR GURU MI NURUL HUDA III\n", titleFont));
         judul.add(new Phrase("TAHUN AJARAN " + tahunAjaran + "\n", titleFont));
         judul.add(new Phrase("BULAN " + bulan.toUpperCase() + " " + tahun, titleFont));
-        judul.setAlignment(Element.ALIGN_CENTER);
+        judul.setAlignment(Element.ALIGN_LEFT); 
+        judul.setIndentationLeft(-5f);
 
         PdfPCell cellJudul = new PdfPCell(judul);
         cellJudul.setBorder(Rectangle.NO_BORDER);
         cellJudul.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cellJudul.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cellJudul.setHorizontalAlignment(Element.ALIGN_CENTER); 
+        cellJudul.setPaddingLeft(-100f); 
         headerTable.addCell(cellJudul);
 
         doc.add(headerTable);
