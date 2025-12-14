@@ -182,7 +182,7 @@ public class RekapAbsensiDao {
         }
     }
 
-public void cetakRekapPerGuru(String guru, String bulan, String tahun, JTable table) {
+    public void cetakRekapPerGuru(String guru, String bulan, String tahun, JTable table) {
     try {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Simpan Rekap Per Guru");
@@ -225,10 +225,11 @@ public void cetakRekapPerGuru(String guru, String bulan, String tahun, JTable ta
 
         // JUDUL SAMPING LOGO
         Font titleFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
-
+        
+        String tahunAjaran = getTahunAjaran(bulan, tahun);
         Paragraph judul = new Paragraph();
         judul.add(new Phrase("DAFTAR HADIR GURU MI NURUL HUDA III\n", titleFont));
-        judul.add(new Phrase("TAHUN AJARAN 2025/2026\n", titleFont));
+        judul.add(new Phrase("TAHUN AJARAN " + tahunAjaran + "\n", titleFont));
         judul.add(new Phrase("BULAN " + bulan.toUpperCase() + " " + tahun, titleFont));
         judul.setAlignment(Element.ALIGN_CENTER);
 
@@ -242,26 +243,27 @@ public void cetakRekapPerGuru(String guru, String bulan, String tahun, JTable ta
 
         // ===== Garis bawah header =====
         Paragraph garis = new Paragraph("______________________________________________________________________________");
-        garis.setSpacingBefore(10f);
-        garis.setSpacingAfter(13f);
+        garis.setSpacingBefore(5f);
+        garis.setSpacingAfter(5f); // Dikurangi agar garis lebih dekat dengan tabel
         doc.add(garis);
 
         // ===========================================================
         Font normal = new Font(Font.FontFamily.HELVETICA, 11);
         Font headerFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
 
-        // TABEL UNTUK GURU SPESIFIK
-        doc.add(new Paragraph("Nama Guru: " + guru + "\n\n", normal));
+        // NAMA GURU
+        Paragraph namaGuruParagraph = new Paragraph("Nama Guru: " + guru + "\n", normal);
+        namaGuruParagraph.setSpacingAfter(5f); // Jarak sebelum tabel
+        doc.add(namaGuruParagraph);
 
-        // Tabel dengan 4 kolom (tanpa STATUS)
+        // Tabel dengan 4 kolom: TANGGAL, JAM MASUK, JAM PULANG, STATUS
         PdfPTable pdfTable = new PdfPTable(4);
         pdfTable.setWidthPercentage(100);
-        pdfTable.setWidths(new float[]{25, 30, 20, 25}); // Proporsi kolom
-        pdfTable.setSpacingBefore(5f);
-        pdfTable.setSpacingAfter(10f);
+        pdfTable.setWidths(new float[]{25, 25, 25, 25}); // Proporsi kolom sama rata
+        pdfTable.setSpacingBefore(0f); // Mendekatkan tabel ke garis
 
         // Header tabel
-        String[] headers = {"TANGGAL", "NAMA GURU", "JAM MASUK", "JAM PULANG"};
+        String[] headers = {"Tanggal", "Jam Masuk", "Jam Pulang", "Status"};
         for (String h : headers) {
             PdfPCell c = new PdfPCell(new Phrase(h, headerFont));
             c.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -276,32 +278,39 @@ public void cetakRekapPerGuru(String guru, String bulan, String tahun, JTable ta
         // Data tabel
         TableModel model = table.getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
-            // Sesuai dengan getRekap(): kolom 0=Tanggal, 1=Nama Guru, 2=Jam Masuk, 3=Jam Pulang, 4=Status
+            // Kolom: 0=Tanggal, 1=Nama Guru, 2=Jam Masuk, 3=Jam Pulang, 4=Status
             String tgl = model.getValueAt(i, 0) != null ? model.getValueAt(i, 0).toString() : "";
-            String namaGuru = model.getValueAt(i, 1) != null ? model.getValueAt(i, 1).toString() : "";
             String jm = model.getValueAt(i, 2) != null ? model.getValueAt(i, 2).toString() : "";
             String jp = model.getValueAt(i, 3) != null ? model.getValueAt(i, 3).toString() : "";
             String st = model.getValueAt(i, 4) != null ? model.getValueAt(i, 4).toString() : "";
 
-            // Tanggal
+            // Tanggal - CENTER
             PdfPCell cellTgl = new PdfPCell(new Phrase(tgl, normal));
             cellTgl.setPadding(5);
+            cellTgl.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellTgl.setVerticalAlignment(Element.ALIGN_MIDDLE);
             pdfTable.addCell(cellTgl);
 
-            // Nama Guru (dari data tabel)
-            PdfPCell cellGuru = new PdfPCell(new Phrase(namaGuru, normal));
-            cellGuru.setPadding(5);
-            pdfTable.addCell(cellGuru);
-
-            // Jam Masuk
+            // Jam Masuk - CENTER
             PdfPCell cellJM = new PdfPCell(new Phrase(jm, normal));
             cellJM.setPadding(5);
+            cellJM.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellJM.setVerticalAlignment(Element.ALIGN_MIDDLE);
             pdfTable.addCell(cellJM);
 
-            // Jam Pulang
+            // Jam Pulang - CENTER
             PdfPCell cellJP = new PdfPCell(new Phrase(jp, normal));
             cellJP.setPadding(5);
+            cellJP.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellJP.setVerticalAlignment(Element.ALIGN_MIDDLE);
             pdfTable.addCell(cellJP);
+
+            // Status - CENTER
+            PdfPCell cellSt = new PdfPCell(new Phrase(st, normal));
+            cellSt.setPadding(5);
+            cellSt.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellSt.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            pdfTable.addCell(cellSt);
 
             // Hitung status
             if (st.equalsIgnoreCase("Hadir Lengkap")) {
@@ -325,7 +334,6 @@ public void cetakRekapPerGuru(String guru, String bulan, String tahun, JTable ta
         JOptionPane.showMessageDialog(null, "Error PDF Per Guru: " + e.toString());
     }
 }
-
     public void cetakRekapSemuaGuruRekapTotal(String bulan, String tahun) {
         try {
 
