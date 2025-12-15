@@ -189,20 +189,20 @@ public class Absensi extends javax.swing.JPanel {
 
     private void txtScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtScanActionPerformed
         // TODO add your handling code here:
-        String dataQR = txtScan.getText();
+        String dataQR = txtScan.getText();//mengambil data guru dari scan 
 
-        try {
+        try {//mengambil id guru dari dataQR
             String idGuru = dao.ambilDariQR(dataQR);
 
-            dao.ProsesAbsensi(idGuru);
-            load_table();
+            dao.ProsesAbsensi(idGuru);//menjalankan method proses absensi dari dao  
+            load_table();//reset tabel
         } catch (SQLException ex) {
             dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
                     "Peringatan", JOptionPane.INFORMATION_MESSAGE, 2000);
         }
-
+        //mengeSet txt scan kosong
         txtScan.setText("");
-        txtScan.requestFocusInWindow();
+        txtScan.requestFocusInWindow();//set fokus di txt scan untuk scan barqode
 
     }//GEN-LAST:event_txtScanActionPerformed
 
