@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package absensiguru.dao;
+package sipresdik.dao;
 
-import absensiguru.helper.Koneksi;
-import absensiguru.model.AbsensiModel;
+import sipresdik.helper.Koneksi;
+import sipresdik.model.PresensiModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
@@ -23,16 +23,16 @@ import java.time.ZoneId;
  *
  * @author THINKPAD X280
  */
-public class AbsensiDao extends Koneksi {
+public class PresensiDao extends Koneksi {
 
     private final Connection koneksi;//koenksi aktif untuk menghubungkan ke database
     private PreparedStatement ps;//digunakan untuk query dengan parameter
     private Statement st;//digunakan untuk query tanpa parameter
     private ResultSet rs;//digunakan untuk menyimpan data hasil query
     private String Query;//digunakan untuk syntax sql
-    AbsensiModel am = new AbsensiModel();
+    PresensiModel am = new PresensiModel();
 
-    public AbsensiDao() {
+    public PresensiDao() {
         koneksi = super.konek();//untuk buka koneksi setiap dao aktif
     }
     //method mengambil data absensi hari ini

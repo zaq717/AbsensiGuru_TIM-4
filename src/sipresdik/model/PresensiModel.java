@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package absensiguru.model;
+package sipresdik.model;
 
-import absensiguru.helper.Koneksi;
+import sipresdik.helper.Koneksi;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -12,7 +12,7 @@ import java.time.LocalTime;
  *
  * @author THINKPAD X280
  */
-public class AbsensiModel extends Koneksi {
+public class PresensiModel extends Koneksi {
     //deklarasi variabel 
     private String idGuru, namaGuru, status;
     private LocalDate tanggal;
