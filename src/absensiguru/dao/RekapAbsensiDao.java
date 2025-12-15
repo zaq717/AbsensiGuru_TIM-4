@@ -260,7 +260,7 @@ public class RekapAbsensiDao {
 
             // Tabel dengan 4 kolom: TANGGAL, JAM MASUK, JAM PULANG, STATUS
             PdfPTable pdfTable = new PdfPTable(4);
-            pdfTable.setWidthPercentage(95);
+            pdfTable.setWidthPercentage(100);
             pdfTable.setWidths(new float[]{15, 25, 25, 25}); // Proporsi kolom sama rata
 
             pdfTable.setSpacingBefore(0f);// Mendekatkan tabel ke garis
