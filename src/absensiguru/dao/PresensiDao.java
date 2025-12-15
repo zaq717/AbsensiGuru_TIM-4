@@ -4,8 +4,8 @@
  */
 package absensiguru.dao;
 
-import absensiguru.helper.Koneksi;
-import absensiguru.model.AbsensiModel;
+import presensiguru.helper.Koneksi;
+import presensiguru.model.AbsensiModel;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -21,7 +21,7 @@ import java.time.ZoneId;
  *
  * @author THINKPAD X280
  */
-public class AbsensiDao extends Koneksi {
+public class PresensiDao extends Koneksi {
 
     private final Connection koneksi;
     private PreparedStatement ps;
@@ -30,7 +30,7 @@ public class AbsensiDao extends Koneksi {
     private String Query;
     AbsensiModel am = new AbsensiModel();
 
-    public AbsensiDao() {
+    public PresensiDao() {
         koneksi = super.konek();
     }
 

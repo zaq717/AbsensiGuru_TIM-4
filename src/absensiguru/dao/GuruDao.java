@@ -4,8 +4,8 @@
  */
 package absensiguru.dao;
 
-import absensiguru.helper.Koneksi;
-import absensiguru.model.GuruModel;
+import presensiguru.helper.Koneksi;
+import presensiguru.model.GuruModel;
 import java.sql.*;
 import javax.swing.JOptionPane;
 

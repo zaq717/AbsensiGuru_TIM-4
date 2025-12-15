@@ -1,4 +1,4 @@
-package absensiguru.view;
+package presensiguru.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
@@ -6,7 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import absensiguru.dao.GuruDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import absensiguru.model.GuruModel;
+import presensiguru.model.GuruModel;
 import java.io.File; // Java IO
 import java.io.FileOutputStream;
 

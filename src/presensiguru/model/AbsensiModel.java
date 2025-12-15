@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package absensiguru.model;
+package presensiguru.model;
 
-import absensiguru.helper.Koneksi;
+import presensiguru.helper.Koneksi;
 import java.time.LocalDate;
 import java.time.LocalTime;
 

@@ -4,8 +4,8 @@
  */
 package absensiguru.dao;
 
-import absensiguru.helper.Koneksi;
-import absensiguru.model.ManajemenModel;
+import presensiguru.helper.Koneksi;
+import presensiguru.model.ManajemenModel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Connection;

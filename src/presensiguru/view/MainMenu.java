@@ -1,4 +1,4 @@
-package absensiguru.view;
+package presensiguru.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
@@ -576,7 +576,7 @@ public class MainMenu extends javax.swing.JFrame {
     private void btnAbsensiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAbsensiMouseClicked
         pnAbsensi.setBackground(new Color(12, 175, 121));
         pnUtama.removeAll();
-        pnUtama.add(new Absensi());
+        pnUtama.add(new Presensi());
         pnUtama.repaint();
         pnUtama.revalidate();
     }//GEN-LAST:event_btnAbsensiMouseClicked
@@ -592,7 +592,7 @@ public class MainMenu extends javax.swing.JFrame {
     private void btnRekapAbsensiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRekapAbsensiMouseClicked
         pnRekapAbsensi.setBackground(new Color(12, 175, 121));
         pnUtama.removeAll();
-        pnUtama.add(new RekapAbsensi());
+        pnUtama.add(new RekapPresensi());
         pnUtama.repaint();
         pnUtama.revalidate();
     }//GEN-LAST:event_btnRekapAbsensiMouseClicked
@@ -627,10 +627,10 @@ public class MainMenu extends javax.swing.JFrame {
     ==============================
                      About Absensi Guru
     ==============================
-Nama Aplikasi     : ABSENSI GURU MI NURUL HUDA III
+Nama Aplikasi     :  SIPRESDIK (Sistem Presensi Pendidik)
 Versi                    : 1.0.0
 Dibuat oleh         : TIM 4 SI 2024 INSTITUT TEKNOLOGI MOJOSARI
-Tanggal Rilis        : 01 Oktober 2025
+Tanggal Rilis        : 16 Desember 2025
 
 Deskripsi:
 

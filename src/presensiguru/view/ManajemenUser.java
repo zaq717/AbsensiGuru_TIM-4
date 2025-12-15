@@ -1,7 +1,7 @@
-package absensiguru.view;
+package presensiguru.view;
 
 import absensiguru.dao.ManajemenDao;
-import absensiguru.model.ManajemenModel;
+import presensiguru.model.ManajemenModel;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;

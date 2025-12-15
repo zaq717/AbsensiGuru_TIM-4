@@ -1,6 +1,6 @@
 package absensiguru.dao;
 
-import absensiguru.helper.Koneksi;
+import presensiguru.helper.Koneksi;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

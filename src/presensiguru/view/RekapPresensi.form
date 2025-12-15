@@ -53,7 +53,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Rekap Absensi"/>
+            <Property name="text" type="java.lang.String" value="Rekap Presensi"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -84,7 +84,7 @@
                           <Component id="lbGuru" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="cbGuru" min="-2" pref="94" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="btnCari" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="btnCetak" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -97,18 +97,16 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="btnCari" alignment="0" min="-2" pref="22" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lbBulan" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cbBulan" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbTahun" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cbTahun" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbGuru" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cbGuru" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="lbBulan" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cbBulan" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lbTahun" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cbTahun" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lbGuru" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cbGuru" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnCari" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                   <Component id="btnCetak" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="tbRekap" min="-2" pref="359" max="-2" attributes="0"/>
@@ -126,23 +124,12 @@
         <Component class="javax.swing.JComboBox" name="cbBulan">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="13">
-                <StringItem index="0" value="Semua"/>
-                <StringItem index="1" value="Januari"/>
-                <StringItem index="2" value="Februari"/>
-                <StringItem index="3" value="Maret"/>
-                <StringItem index="4" value="April"/>
-                <StringItem index="5" value="Mei"/>
-                <StringItem index="6" value="Juni"/>
-                <StringItem index="7" value="Juli"/>
-                <StringItem index="8" value="Agustus"/>
-                <StringItem index="9" value="September"/>
-                <StringItem index="10" value="Oktober"/>
-                <StringItem index="11" value="November"/>
-                <StringItem index="12" value="Desember"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbBulanActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
@@ -155,11 +142,8 @@
         <Component class="javax.swing.JComboBox" name="cbTahun">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Item 1"/>
-                <StringItem index="1" value="Item 2"/>
-                <StringItem index="2" value="Item 3"/>
-                <StringItem index="3" value="Item 4"/>
+              <StringArray count="1">
+                <StringItem index="0" value=" "/>
               </StringArray>
             </Property>
           </Properties>
@@ -178,12 +162,7 @@
         <Component class="javax.swing.JComboBox" name="cbGuru">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Item 1"/>
-                <StringItem index="1" value="Item 2"/>
-                <StringItem index="2" value="Item 3"/>
-                <StringItem index="3" value="Item 4"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
           <Events>
@@ -200,7 +179,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="jTable1">
+            <Component class="javax.swing.JTable" name="tblRekap">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="4" rowCount="4">
@@ -211,6 +190,9 @@
                   </Table>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="ancestorAdded" listener="javax.swing.event.AncestorListener" parameters="javax.swing.event.AncestorEvent" handler="tblRekapAncestorAdded"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -251,6 +233,7 @@
             <Property name="text" type="java.lang.String" value="Cari"/>
           </Properties>
           <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnCariMouseClicked"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCariActionPerformed"/>
           </Events>
         </Component>

@@ -1,20 +1,20 @@
-package absensiguru.view;
+package presensiguru.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIManager;
-import absensiguru.dao.AbsensiDao;
+import absensiguru.dao.PresensiDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
-public class Absensi extends javax.swing.JPanel {
+public class Presensi extends javax.swing.JPanel {
 
-    AbsensiDao dao = new AbsensiDao();
+    PresensiDao dao = new PresensiDao();
     DefaultTableModel model;
 
-    public Absensi() {
+    public Presensi() {
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
         } catch (Exception ex) {

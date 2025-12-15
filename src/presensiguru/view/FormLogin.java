@@ -1,4 +1,4 @@
- package absensiguru.view;
+ package presensiguru.view;
 
 import absensiguru.dao.LoginDao;
 import javax.swing.JOptionPane;
