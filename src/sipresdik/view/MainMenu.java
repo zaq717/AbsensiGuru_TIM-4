@@ -625,7 +625,7 @@ public class MainMenu extends javax.swing.JFrame {
         pnAbout.setBackground(new Color(12, 175, 121));
         String aboutAbsensi = """
     ==============================
-                     About Absensi Guru
+                     About SIPRESDIK
     ==============================
 Nama Aplikasi     :  SIPRESDIK (Sistem Presensi Pendidik)
 Versi                    : 1.0.0
