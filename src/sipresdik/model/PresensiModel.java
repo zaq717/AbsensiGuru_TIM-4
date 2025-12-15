@@ -13,14 +13,14 @@ import java.time.LocalTime;
  * @author THINKPAD X280
  */
 public class PresensiModel extends Koneksi {
-
+    //deklarasi variabel 
     private String idGuru, namaGuru, status;
     private LocalDate tanggal;
     private LocalTime jamMasuk;
     private LocalTime jamPulang;
     
 
-
+    //setter dan getter 
     public String getIdGuru() {
         return idGuru;
     }

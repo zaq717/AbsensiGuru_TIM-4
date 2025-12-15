@@ -45,7 +45,7 @@ public class Presensi extends javax.swing.JPanel {
         try {
             ResultSet result = dao.getAbsensiHariIni();//memanggil method getAbsenHariIni
             while (result.next()) {
-                //memanggil baris data dalam database ke JTable
+                    //memanggil baris data dalam database ke JTable
                 model.addRow(new Object[]{
                     result.getString("nama_guru"),
                     result.getString("tanggal"),
@@ -79,7 +79,7 @@ public class Presensi extends javax.swing.JPanel {
 
         lbAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 17)); // NOI18N
         lbAbsensi.setForeground(new java.awt.Color(255, 255, 255));
-        lbAbsensi.setText("Presensi");
+        lbAbsensi.setText("Absensi");
 
         javax.swing.GroupLayout barAtasLayout = new javax.swing.GroupLayout(barAtas);
         barAtas.setLayout(barAtasLayout);
@@ -98,7 +98,7 @@ public class Presensi extends javax.swing.JPanel {
         add(barAtas, java.awt.BorderLayout.PAGE_START);
 
         lbDataAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbDataAbsensi.setText("Data Presensi Hari Ini");
+        lbDataAbsensi.setText("Data Absensi Masuk Hari Ini");
 
         lbJamMasukJamPulang.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lbJamMasukJamPulang.setText("Jam Masuk : 07 : 00 : 00 | Jam Pulang : 10 : 30 : 00");
@@ -157,7 +157,7 @@ public class Presensi extends javax.swing.JPanel {
                             .addComponent(tbAbsensi, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
                             .addComponent(txtScan)))
                     .addGroup(pnDasarLayout.createSequentialGroup()
-                        .addGap(236, 236, 236)
+                        .addGap(205, 205, 205)
                         .addComponent(lbDataAbsensi)))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
@@ -168,11 +168,11 @@ public class Presensi extends javax.swing.JPanel {
                 .addComponent(lbDataAbsensi)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbJamMasukJamPulang)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tbAbsensi, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(tbAbsensi, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
-                .addComponent(txtScan, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                .addComponent(txtScan, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         add(pnDasar, java.awt.BorderLayout.CENTER);
@@ -189,20 +189,21 @@ public class Presensi extends javax.swing.JPanel {
 
     private void txtScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtScanActionPerformed
         // TODO add your handling code here:
-        String dataQR = txtScan.getText();
+        String dataQR = txtScan.getText();//mengambil data guru dari scan 
 
-        try {
+        try {//mengambil id guru dari dataQR
             String idGuru = dao.ambilDariQR(dataQR);
 
-            dao.ProsesAbsensi(idGuru);
-            load_table();
+            dao.ProsesAbsensi(idGuru);//menjalankan method proses absensi dari dao  
+            load_table();//reset tabel
         } catch (SQLException ex) {
             dao.notifikasi("Gagal menyimpan absensi: " + ex.getMessage(),
                     "Peringatan", JOptionPane.INFORMATION_MESSAGE, 2000);
         }
-
+        //mengeSet txt scan kosong
         txtScan.setText("");
-        txtScan.requestFocusInWindow();
+        txtScan.requestFocusInWindow();//set fokus di txt scan untuk scan barqode
+
     }//GEN-LAST:event_txtScanActionPerformed
 
     private void txtScanKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtScanKeyPressed

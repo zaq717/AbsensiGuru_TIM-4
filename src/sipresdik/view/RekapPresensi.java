@@ -1,8 +1,7 @@
 package sipresdik.view;
 
-import sipresdik.dao.RekapPresensiDao;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.UIManager;
 
 /**
  *
@@ -10,70 +9,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class RekapPresensi extends javax.swing.JPanel {
 
-    RekapPresensiDao dao = new RekapPresensiDao();
-    private boolean dataSudahDicari = false;
-
     /**
      * Creates new form Dashboard
      */
     public RekapPresensi() {
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("FlatLaf Error");
+        }
         initComponents();
-        loadTahun();
-        loadGuru();
-        loadBulan();
-        loadRekap();
-        cbBulan.addActionListener(e -> dataSudahDicari = false);
-        cbTahun.addActionListener(e -> dataSudahDicari = false);
-        cbGuru.addActionListener(e -> dataSudahDicari = false);
-    }
-
-    public void loadRekap() {
-        String bulan = cbBulan.getSelectedItem().toString();
-        String tahun = cbTahun.getSelectedItem().toString();
-        String guru = cbGuru.getSelectedItem().toString();
-        DefaultTableModel model = dao.getRekap(bulan, tahun, guru);
-        tblRekap.setModel(model);
-    }
-
-    private void loadBulan() {
-        cbBulan.removeAllItems();
-        cbBulan.addItem("Semua");
-        cbBulan.addItem("Januari");
-        cbBulan.addItem("Februari");
-        cbBulan.addItem("Maret");
-        cbBulan.addItem("April");
-        cbBulan.addItem("Mei");
-        cbBulan.addItem("Juni");
-        cbBulan.addItem("Juli");
-        cbBulan.addItem("Agustus");
-        cbBulan.addItem("September");
-        cbBulan.addItem("Oktober");
-        cbBulan.addItem("November");
-        cbBulan.addItem("Desember");
-    }
-
-    private void loadTahun() {
-        RekapPresensiDao dao = new RekapPresensiDao();
-        DefaultTableModel modelTahun = dao.getComboTahun();
-
-        cbTahun.removeAllItems();
-        cbTahun.addItem("Semua");
-
-        for (int i = 0; i < modelTahun.getRowCount(); i++) {
-            cbTahun.addItem(modelTahun.getValueAt(i, 0).toString());
-        }
-    }
-
-    private void loadGuru() {
-        RekapPresensiDao dao = new RekapPresensiDao();
-        DefaultTableModel modelGuru = dao.getComboGuru();
-
-        cbGuru.removeAllItems();
-        cbGuru.addItem("Semua");
-
-        for (int i = 0; i < modelGuru.getRowCount(); i++) {
-            cbGuru.addItem(modelGuru.getValueAt(i, 0).toString());
-        }
     }
 
     /**
@@ -95,7 +40,7 @@ public class RekapPresensi extends javax.swing.JPanel {
         lbGuru = new javax.swing.JLabel();
         cbGuru = new javax.swing.JComboBox<>();
         tbRekap = new javax.swing.JScrollPane();
-        tblRekap = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         btnCetak = new javax.swing.JButton();
         btnCari = new javax.swing.JButton();
 
@@ -105,7 +50,7 @@ public class RekapPresensi extends javax.swing.JPanel {
 
         lbRekap.setFont(new java.awt.Font("Segoe UI", 1, 17)); // NOI18N
         lbRekap.setForeground(new java.awt.Color(255, 255, 255));
-        lbRekap.setText("Rekap Presensi");
+        lbRekap.setText("Rekap Absensi");
 
         javax.swing.GroupLayout barAtasLayout = new javax.swing.GroupLayout(barAtas);
         barAtas.setLayout(barAtasLayout);
@@ -125,15 +70,11 @@ public class RekapPresensi extends javax.swing.JPanel {
 
         lbBulan.setText("Bulan :");
 
-        cbBulan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbBulanActionPerformed(evt);
-            }
-        });
+        cbBulan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember" }));
 
         lbTahun.setText("Tahun :");
 
-        cbTahun.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        cbTahun.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cbTahun.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbTahunActionPerformed(evt);
@@ -142,13 +83,14 @@ public class RekapPresensi extends javax.swing.JPanel {
 
         lbGuru.setText("Guru :");
 
+        cbGuru.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cbGuru.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbGuruActionPerformed(evt);
             }
         });
 
-        tblRekap.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -159,16 +101,7 @@ public class RekapPresensi extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tblRekap.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                tblRekapAncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
-        tbRekap.setViewportView(tblRekap);
+        tbRekap.setViewportView(jTable1);
 
         btnCetak.setBackground(new java.awt.Color(0, 150, 253));
         btnCetak.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -186,11 +119,6 @@ public class RekapPresensi extends javax.swing.JPanel {
         btnCari.setForeground(new java.awt.Color(255, 255, 255));
         btnCari.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/icons8-search-20.png"))); // NOI18N
         btnCari.setText("Cari");
-        btnCari.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnCariMouseClicked(evt);
-            }
-        });
         btnCari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCariActionPerformed(evt);
@@ -217,7 +145,7 @@ public class RekapPresensi extends javax.swing.JPanel {
                         .addComponent(lbGuru)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbGuru, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCari))
                     .addComponent(btnCetak))
                 .addGap(17, 17, 17))
@@ -226,15 +154,16 @@ public class RekapPresensi extends javax.swing.JPanel {
             pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnDasarLayout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbBulan)
-                    .addComponent(cbBulan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbTahun)
-                    .addComponent(cbTahun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbGuru)
-                    .addComponent(cbGuru, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
+                .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnDasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lbBulan)
+                        .addComponent(cbBulan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lbTahun)
+                        .addComponent(cbTahun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lbGuru)
+                        .addComponent(cbGuru, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(38, 38, 38)
                 .addComponent(btnCetak)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tbRekap, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -246,70 +175,19 @@ public class RekapPresensi extends javax.swing.JPanel {
 
     private void cbGuruActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbGuruActionPerformed
         // TODO add your handling code here:
-
     }//GEN-LAST:event_cbGuruActionPerformed
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-        // TODO add your handling code here:                                                                                 
-        String bulan = cbBulan.getSelectedItem().toString();
-        String tahun = cbTahun.getSelectedItem().toString();
-        String guru = cbGuru.getSelectedItem().toString();
-
-        // 1. WAJIB klik Cari dulu
-        if (!dataSudahDicari) {
-            JOptionPane.showMessageDialog(null,
-                    "Silakan klik tombol 'Cari' terlebih dahulu sebelum mencetak.");
-            return;
-        }
-
-        // 2. Validasi bulan & tahun
-        if (bulan.equals("Semua") || tahun.equals("Semua")) {
-            JOptionPane.showMessageDialog(null,
-                    "Silakan pilih bulan dan tahun terlebih dahulu.");
-            return;
-        }
-        // 3. Validasi tabel kosong
-        if (tblRekap.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(null,
-                    "Tidak ada data yang bisa dicetak.");
-            return;
-        }
-        // 4. Guru = Semua → penanda cetak semua guru
-        if (guru.equals("Semua")) {
-            guru = "SEMUA_GURU";
-        }
-        try {
-            RekapPresensiDao dao = new RekapPresensiDao();
-            dao.cetakOtomatis(guru, bulan, tahun, tblRekap);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                    "Gagal mencetak PDF: " + e.getMessage());
-        }
+        // TODO add your handling code here:
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void cbTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTahunActionPerformed
         // TODO add your handling code here:
-
     }//GEN-LAST:event_cbTahunActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-        // TODO add your handling code here:                                    
-        loadRekap();
-        dataSudahDicari = true;
+        // TODO add your handling code here:
     }//GEN-LAST:event_btnCariActionPerformed
-
-    private void tblRekapAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tblRekapAncestorAdded
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tblRekapAncestorAdded
-
-    private void cbBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbBulanActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_cbBulanActionPerformed
-
-    private void btnCariMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCariMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCariMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -319,13 +197,12 @@ public class RekapPresensi extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cbBulan;
     private javax.swing.JComboBox<String> cbGuru;
     private javax.swing.JComboBox<String> cbTahun;
+    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lbBulan;
     private javax.swing.JLabel lbGuru;
     private javax.swing.JLabel lbRekap;
     private javax.swing.JLabel lbTahun;
     private javax.swing.JPanel pnDasar;
     private javax.swing.JScrollPane tbRekap;
-    private javax.swing.JTable tblRekap;
     // End of variables declaration//GEN-END:variables
-
 }

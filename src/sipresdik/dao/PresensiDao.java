@@ -6,6 +6,8 @@ package sipresdik.dao;
 
 import sipresdik.helper.Koneksi;
 import sipresdik.model.PresensiModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -33,7 +35,6 @@ public class PresensiDao extends Koneksi {
     public PresensiDao() {
         koneksi = super.konek();//untuk buka koneksi setiap dao aktif
     }
-
     //method mengambil data absensi hari ini
     public ResultSet getAbsensiHariIni() {
         Query = "SELECT a.*, g.nama AS nama_guru "
@@ -47,7 +48,6 @@ public class PresensiDao extends Koneksi {
         }
         return rs;//mengembalikan nilai rs berisi data absensi
     }
-
     //method mengecek apakah guru terdaftar?
     public boolean CekGuru(String idGuru) throws SQLException {
         Query = "SELECT * FROM guru WHERE id_guru = ?";
@@ -55,11 +55,11 @@ public class PresensiDao extends Koneksi {
         ps.setString(1, idGuru);//mengisi parameter id guru
         rs = ps.executeQuery();//eksekusi query dan hasil disimpan ke objek rs
 
-        if (!rs.next()) {//jika id guru tidak ada di dataabases
+             if (!rs.next()) {//jika id guru tidak ada di dataabases
             notifikasi("Guru dengan ID " + idGuru + " tidak ditemukan!",
                     "Error", JOptionPane.ERROR_MESSAGE, 2000);
             return false;
-        }
+            }
         return true;//return true jika id_guru ditemukan
     }
 
@@ -95,7 +95,7 @@ public class PresensiDao extends Koneksi {
         ps.executeUpdate();
     }
 
-    public void ProsesAbsensi(String idGuru) throws SQLException {
+    public void ProsesAbsensi(String idGuru) throws SQLException{
         try {//pengecekan id guru apakah terdaftar?
             if (!CekGuru(idGuru)) {
                 return;
@@ -103,8 +103,8 @@ public class PresensiDao extends Koneksi {
             //aturan waktu absen
             LocalTime waktuSekarang = LocalTime.now(ZoneId.of("Asia/Jakarta"));//local time waktu jakarta (WIB).
             LocalTime jamAwalMasuk = LocalTime.of(07, 00, 00);
-            LocalTime jamAkhirMasuk = LocalTime.of(10, 29, 59);
-            LocalTime jamMulaiPulang = LocalTime.of(10, 30, 00);
+            LocalTime jamAkhirMasuk = LocalTime.of(10, 43, 59);
+            LocalTime jamMulaiPulang = LocalTime.of(10, 44, 00);
             //cek apakah sudah absen hari ini
             boolean sudahAbsen = CekAbsenHariIni(idGuru);
             //absen masuk
@@ -144,7 +144,6 @@ public class PresensiDao extends Koneksi {
                     "Terjadi kesalahan: " + e.getMessage());
         }
     }
-
     //method mengambil id guru di data qr
     public String ambilDariQR(String dataQR) {
         //contoh QR: "ID:4|Nama:Ahmad"

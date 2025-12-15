@@ -1,36 +1,13 @@
 package sipresdik.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import sipresdik.dao.GuruDao;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import sipresdik.model.GuruModel;
-import java.io.File; // Java IO
-import java.io.FileOutputStream;
-
-import com.itextpdf.text.Document; // iText PDF
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Element;
-
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.BaseFont;
-
-import sipresdik.dao.QRGenerator; // ZXing QR Generator
-import com.itextpdf.text.BaseColor;
+import javax.swing.UIManager;
 
 /**
  *
  * @author HP
  */
 public class DataGuru extends javax.swing.JPanel {
-
-    GuruDao dao = new GuruDao();
-    String jk;
-    int idGuruTerpilih;
 
     /**
      * Creates new form Dashboard
@@ -42,56 +19,6 @@ public class DataGuru extends javax.swing.JPanel {
             System.err.println("FlatLaf Error");
         }
         initComponents();
-        resetForm();
-        loadData();
-    }
-
-    // Method untuk menampilkan data ke tabel
-    private void loadData() {//perbaiki
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("ID");
-        model.addColumn("NIP");
-        model.addColumn("Nama");
-        model.addColumn("Jenis Kelamin");
-        model.addColumn("Alamat");
-
-        try {
-            GuruDao gd = new GuruDao(); // class DAO kamu
-            ResultSet result = gd.TampilGuru(); // panggil method untuk ambil data guru
-
-            while (result.next()) {
-                // Ubah kode jenis kelamin L/P menjadi teks agar lebih mudah dibaca
-                jk = result.getString("jenis_kelamin");
-                if ("L".equalsIgnoreCase(jk)) {
-                    jk = "Laki-Laki";
-                } else if ("P".equalsIgnoreCase(jk)) {
-                    jk = "Perempuan";
-                } else {
-                    jk = "-";
-                }
-
-                model.addRow(new Object[]{
-                    result.getInt("id_guru"),
-                    result.getString("nip"),
-                    result.getString("nama"),
-                    jk,
-                    result.getString("alamat")
-                });
-            }
-
-            tbDataGuru.setModel(model);
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Gagal menampilkan data: " + e.getMessage());
-        }
-    }
-
-    private void resetForm() {
-        fNip.setText("");
-        fNama.setText("");
-        fAlamat.setText("");
-        cbJeniskel.setSelectedItem(null);
-        fNip.setEditable(true);
     }
 
     /**
@@ -169,11 +96,6 @@ public class DataGuru extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tbDataGuru.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tbDataGuruMouseClicked(evt);
-            }
-        });
         jScrollPane1.setViewportView(tbDataGuru);
 
         btnReset.setBackground(new java.awt.Color(0, 150, 253));
@@ -192,11 +114,6 @@ public class DataGuru extends javax.swing.JPanel {
         btnHapus.setForeground(new java.awt.Color(255, 255, 255));
         btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/icons8-delete-20.png"))); // NOI18N
         btnHapus.setText("Hapus");
-        btnHapus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHapusActionPerformed(evt);
-            }
-        });
 
         btnUbah.setBackground(new java.awt.Color(252, 152, 52));
         btnUbah.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -225,11 +142,6 @@ public class DataGuru extends javax.swing.JPanel {
         btnGenerateQR.setForeground(new java.awt.Color(255, 255, 255));
         btnGenerateQR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/icons8-qr-20.png"))); // NOI18N
         btnGenerateQR.setText("Generate QR");
-        btnGenerateQR.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnGenerateQRMouseClicked(evt);
-            }
-        });
         btnGenerateQR.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGenerateQRActionPerformed(evt);
@@ -317,205 +229,21 @@ public class DataGuru extends javax.swing.JPanel {
         add(pnDasar, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-
     private void btnGenerateQRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateQRActionPerformed
         // TODO add your handling code here:
-        try {
-            if (idGuruTerpilih == 0) {
-                JOptionPane.showMessageDialog(this,
-                        "Pilih guru dulu dari tabel!");
-                return;
-            }
-
-            String nip = fNip.getText();
-            String nama = fNama.getText();
-
-            if (nama.isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                        "Nama harus diisi!");
-                return;
-            }
-
-            //Buat Data QR 
-            String dataQR = "ID:" + idGuruTerpilih
-                    + "|NIP:" + nip
-                    + "|NAMA:" + nama;
-
-            //Generate QR PNG 
-            String qrPath = "qr_guru/" + idGuruTerpilih + "_" + nama + ".png";
-            File qrFolder = new File("qr_guru");
-            if (!qrFolder.exists()) {
-                qrFolder.mkdir();
-            }
-
-            QRGenerator.generateQRCode(dataQR, qrPath);
-
-            //Tentukan Ukuran PDF
-            float width = 155.9f;   // 85,60 mm = 242 point // 5.5 cm
-            float height = 241.0f;  // 53,98 mm = 153 point // 8.5 cm
-            Rectangle ktpSize = new Rectangle(width, height);
-
-            //Load Template Kartu
-            Image template = Image.getInstance("src/Image/Template_Presensi.jpg");
-            template.scaleAbsolute(width, height);
-            template.setAbsolutePosition(0f, 0f);
-
-            //Load QR
-            Image qr = Image.getInstance(qrPath);
-            qr.scaleAbsolute(68, 68);
-            qr.setAbsolutePosition(44, 92); 
-
-            //PILIH LOKASI SIMPAN PDF
-            JFileChooser chooser = new JFileChooser();
-            chooser.setDialogTitle("Simpan Kartu Guru (PDF)");
-            chooser.setSelectedFile(new File("QR_guru_" + idGuruTerpilih + "_" + nama + ".pdf"));
-
-            chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-                    "PDF File (*.pdf)", "pdf"));
-
-            int result = chooser.showSaveDialog(this);
-            if (result != JFileChooser.APPROVE_OPTION) {
-                JOptionPane.showMessageDialog(this, "Penyimpanan dibatalkan.");
-                return;
-            }
-
-            File fileDipilih = chooser.getSelectedFile();
-            String output;
-
-            if (!fileDipilih.getName().toLowerCase().endsWith(".pdf")) {
-                output = fileDipilih.getAbsolutePath() + ".pdf";
-            } else {
-                output = fileDipilih.getAbsolutePath();
-            }
-
-            //Buat PDF
-            Document doc = new Document(ktpSize);
-            PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(output));
-            doc.open();
-
-            doc.add(template); // background
-            doc.add(qr);       // QR
-
-            PdfContentByte cb = writer.getDirectContent();
-            BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252,
-                    BaseFont.NOT_EMBEDDED);
-
-            cb.beginText();
-            cb.setFontAndSize(bf, 11);
-
-            cb.setColorFill(BaseColor.WHITE);
-
-            float yPos = 52;
-
-            cb.showTextAligned(
-                    Element.ALIGN_CENTER,
-                    nama,
-                    width / 2,
-                    yPos, // posisi bawah
-                    0
-            );
-
-            cb.endText();
-            doc.close();
-
-            JOptionPane.showMessageDialog(this,
-                    "Berhasil membuat QR Guru\nLokasi file:\n" + output);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Gagal: " + e.getMessage());
-        }
-
-
     }//GEN-LAST:event_btnGenerateQRActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
-        GuruModel g = new GuruModel();
-        g.setNip(fNip.getText());
-        g.setNama(fNama.getText());
-        g.setJenisKelamin(cbJeniskel.getSelectedItem().toString());
-        g.setAlamat(fAlamat.getText());
-        GuruDao gd = new GuruDao();
-        gd.insert(g);
-        loadData();
-        resetForm();
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
         // TODO add your handling code here:
-        GuruModel g = new GuruModel();
-        g.setId(idGuruTerpilih);
-        g.setNama(fNama.getText());
-        g.setJenisKelamin(cbJeniskel.getSelectedItem().toString());
-        g.setAlamat(fAlamat.getText());
-
-        dao.update(g);
-
-        loadData();
-        resetForm();
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
-        resetForm();
-        fNip.setEditable(true);
     }//GEN-LAST:event_btnResetActionPerformed
-
-    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-        // TODO add your handling code here:
-        GuruModel g = new GuruModel();
-        g.setId(idGuruTerpilih);
-        GuruDao gd = new GuruDao();
-        gd.delete(g);
-        loadData();
-        resetForm();
-    }//GEN-LAST:event_btnHapusActionPerformed
-
-    private void tbDataGuruMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataGuruMouseClicked
-        // TODO add your handling code here:
-        int barisYangDipilih = tbDataGuru.rowAtPoint(evt.getPoint());
-
-        if (barisYangDipilih >= 0) {
-            idGuruTerpilih = Integer.parseInt(tbDataGuru.getValueAt(barisYangDipilih, 0).toString());
-            Object nipObj = tbDataGuru.getValueAt(barisYangDipilih, 1);
-            Object namaObj = tbDataGuru.getValueAt(barisYangDipilih, 2);
-            Object jkObj = tbDataGuru.getValueAt(barisYangDipilih, 3);
-            Object alamatObj = tbDataGuru.getValueAt(barisYangDipilih, 4);
-
-            String NIP = (nipObj != null) ? nipObj.toString() : "";
-            String namaGuru = (namaObj != null) ? namaObj.toString() : "";
-            String jenisKelamin = (jkObj != null) ? jkObj.toString() : "";
-            String alamat = (alamatObj != null) ? alamatObj.toString() : "";
-
-            fNip.setText(NIP);
-            fNip.setEditable(false);
-            fNama.setText(namaGuru);
-            fAlamat.setText(alamat);
-
-            // Tentukan jenis kelamin
-            switch (jenisKelamin) {
-                case "L":
-                case "Laki-Laki":
-                    cbJeniskel.setSelectedItem("Laki-Laki");
-                    break;
-                case "P":
-                case "Perempuan":
-                    cbJeniskel.setSelectedItem("Perempuan");
-                    break;
-                default:
-                    cbJeniskel.setSelectedItem(null);
-                    break;
-            }
-        }
-
-    }//GEN-LAST:event_tbDataGuruMouseClicked
-
-    private void btnGenerateQRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGenerateQRMouseClicked
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_btnGenerateQRMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -540,5 +268,4 @@ public class DataGuru extends javax.swing.JPanel {
     private javax.swing.JTable tbDataGuru;
     private javax.swing.JLabel txtID;
     // End of variables declaration//GEN-END:variables
-
 }
