@@ -11,7 +11,6 @@ import javax.swing.table.DefaultTableModel;
 public class RekapPresensi extends javax.swing.JPanel {
 
     RekapPresensiDao dao = new RekapPresensiDao();
-    private boolean dataSudahDicari = false;
 
     /**
      * Creates new form Dashboard
@@ -22,15 +21,15 @@ public class RekapPresensi extends javax.swing.JPanel {
         loadGuru();
         loadBulan();
         loadRekap();
-        cbBulan.addActionListener(e -> dataSudahDicari = false);
-        cbTahun.addActionListener(e -> dataSudahDicari = false);
-        cbGuru.addActionListener(e -> dataSudahDicari = false);
     }
 
     public void loadRekap() {
+        RekapPresensiDao dao = new RekapPresensiDao();
+
         String bulan = cbBulan.getSelectedItem().toString();
         String tahun = cbTahun.getSelectedItem().toString();
         String guru = cbGuru.getSelectedItem().toString();
+
         DefaultTableModel model = dao.getRekap(bulan, tahun, guru);
         tblRekap.setModel(model);
     }
@@ -105,7 +104,7 @@ public class RekapPresensi extends javax.swing.JPanel {
 
         lbRekap.setFont(new java.awt.Font("Segoe UI", 1, 17)); // NOI18N
         lbRekap.setForeground(new java.awt.Color(255, 255, 255));
-        lbRekap.setText("Rekap Presensi");
+        lbRekap.setText("Rekap Absensi");
 
         javax.swing.GroupLayout barAtasLayout = new javax.swing.GroupLayout(barAtas);
         barAtas.setLayout(barAtasLayout);
@@ -251,40 +250,46 @@ public class RekapPresensi extends javax.swing.JPanel {
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
         // TODO add your handling code here:                                                                                 
+
         String bulan = cbBulan.getSelectedItem().toString();
         String tahun = cbTahun.getSelectedItem().toString();
         String guru = cbGuru.getSelectedItem().toString();
 
-        // 1. WAJIB klik Cari dulu
-        if (!dataSudahDicari) {
+        // 1. Jika bulan dan tahun belum dipilih → tampilkan pesan
+        if (bulan.equals("Semua") || tahun.equals("Semua")) {
             JOptionPane.showMessageDialog(null,
-                    "Silakan klik tombol 'Cari' terlebih dahulu sebelum mencetak.");
+                    "Silahkan pilih bulan dan tahun terlebih dahulu.");
             return;
         }
 
-        // 2. Validasi bulan & tahun
-        if (bulan.equals("Semua") || tahun.equals("Semua")) {
-            JOptionPane.showMessageDialog(null,
-                    "Silakan pilih bulan dan tahun terlebih dahulu.");
-            return;
-        }
-        // 3. Validasi tabel kosong
-        if (tblRekap.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(null,
-                    "Tidak ada data yang bisa dicetak.");
-            return;
-        }
-        // 4. Guru = Semua → penanda cetak semua guru
+        // 2. Jika bulan & tahun dipilih, tetapi guru = Semua → cetak semua guru
         if (guru.equals("Semua")) {
             guru = "SEMUA_GURU";
+            // nilai khusus supaya DAO mengerti bahwa guru = all
         }
+
+        // 3. Jika hanya guru yang dipilih tetapi bulan/tahun belum dipilih
+        //    (Sudah ditangani oleh if pertama)
+        //    Jadi tidak perlu kode tambahan
+        // 4. Jika tabel kosong
+        if (tblRekap.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(null,
+                    "Tidak ada data pada tabel. Tekan tombol 'Cari' terlebih dahulu.");
+            return;
+        }
+
+        // 5. Membuat objek DAO
+        RekapPresensiDao dao = new RekapPresensiDao();
+
+        // 6. Eksekusi cetak PDF
         try {
-            RekapPresensiDao dao = new RekapPresensiDao();
             dao.cetakOtomatis(guru, bulan, tahun, tblRekap);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "Gagal mencetak PDF: " + e.getMessage());
         }
+
+
     }//GEN-LAST:event_btnCetakActionPerformed
 
     private void cbTahunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTahunActionPerformed
@@ -295,7 +300,6 @@ public class RekapPresensi extends javax.swing.JPanel {
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
         // TODO add your handling code here:                                    
         loadRekap();
-        dataSudahDicari = true;
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void tblRekapAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tblRekapAncestorAdded

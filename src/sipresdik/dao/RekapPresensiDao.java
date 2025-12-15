@@ -186,7 +186,7 @@ public class RekapPresensiDao {
         try {
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Simpan Rekap Per Guru");
-            chooser.setSelectedFile(new java.io.File("Rekap_Presensi_" + guru.replaceAll("\\s+", "_") + "_" + bulan + "_" + tahun + ".pdf"));
+            chooser.setSelectedFile(new java.io.File("Rekap_" + guru.replaceAll("\\s+", "_") + "_" + bulan + "_" + tahun + ".pdf"));
 
             int userOption = chooser.showSaveDialog(null);
             if (userOption != JFileChooser.APPROVE_OPTION) {
@@ -344,7 +344,7 @@ public class RekapPresensiDao {
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Simpan Rekap Semua Guru");
             chooser.setSelectedFile(
-                    new File("Rekap_Pesensi_Semua_Guru_" + bulan + "_" + tahun + ".pdf")
+                    new File("Rekap_Semua_Guru_" + bulan + "_" + tahun + ".pdf")
             );
 
             if (chooser.showSaveDialog(null) != JFileChooser.APPROVE_OPTION) {
