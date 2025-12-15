@@ -44,6 +44,7 @@ public class DataGuru extends javax.swing.JPanel {
         initComponents();
         resetForm();
         loadData();
+
     }
 
     // Method untuk menampilkan data ke tabel
@@ -91,7 +92,6 @@ public class DataGuru extends javax.swing.JPanel {
         fNama.setText("");
         fAlamat.setText("");
         cbJeniskel.setSelectedItem(null);
-        fNip.setEditable(true);
     }
 
     /**
@@ -317,10 +317,10 @@ public class DataGuru extends javax.swing.JPanel {
         add(pnDasar, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-
     private void btnGenerateQRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateQRActionPerformed
         // TODO add your handling code here:
         try {
+            // ===================== 0. Validasi =====================
             if (idGuruTerpilih == 0) {
                 JOptionPane.showMessageDialog(this,
                         "Pilih guru dulu dari tabel!");
@@ -336,12 +336,12 @@ public class DataGuru extends javax.swing.JPanel {
                 return;
             }
 
-            //Buat Data QR 
+            // ===================== 1. Buat Data QR =====================
             String dataQR = "ID:" + idGuruTerpilih
                     + "|NIP:" + nip
                     + "|NAMA:" + nama;
 
-            //Generate QR PNG 
+            // ===================== 2. Generate QR PNG =====================
             String qrPath = "qr_guru/" + idGuruTerpilih + "_" + nama + ".png";
             File qrFolder = new File("qr_guru");
             if (!qrFolder.exists()) {
@@ -350,25 +350,25 @@ public class DataGuru extends javax.swing.JPanel {
 
             QRGenerator.generateQRCode(dataQR, qrPath);
 
-            //Tentukan Ukuran PDF
+            // ===================== 3. Tentukan Ukuran PDF =====================
             float width = 155.9f;   // 85,60 mm = 242 point // 5.5 cm
             float height = 241.0f;  // 53,98 mm = 153 point // 8.5 cm
             Rectangle ktpSize = new Rectangle(width, height);
 
-            //Load Template Kartu
-            Image template = Image.getInstance("src/Image/Template_Presensi.jpg");
+            // ===================== 4. Load Template Kartu =====================
+            Image template = Image.getInstance("src/Image/Template_Presensi.jpeg.jpg");
             template.scaleAbsolute(width, height);
             template.setAbsolutePosition(0f, 0f);
 
-            //Load QR
+            // ===================== 5. Load QR =====================
             Image qr = Image.getInstance(qrPath);
-            qr.scaleAbsolute(68, 68);
-            qr.setAbsolutePosition(44, 92); 
+            qr.scaleAbsolute(90, 90);
+            qr.setAbsolutePosition(33, 80); // atur sesuai desain kamu
 
-            //PILIH LOKASI SIMPAN PDF
+            // ===================== 6. PILIH LOKASI SIMPAN PDF =====================
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Simpan Kartu Guru (PDF)");
-            chooser.setSelectedFile(new File("QR_guru_" + idGuruTerpilih + "_" + nama + ".pdf"));
+            chooser.setSelectedFile(new File("guru_" + idGuruTerpilih + "_" + nama + ".pdf"));
 
             chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
                     "PDF File (*.pdf)", "pdf"));
@@ -388,7 +388,7 @@ public class DataGuru extends javax.swing.JPanel {
                 output = fileDipilih.getAbsolutePath();
             }
 
-            //Buat PDF
+            // ===================== 7. Buat PDF =====================
             Document doc = new Document(ktpSize);
             PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(output));
             doc.open();
@@ -400,13 +400,14 @@ public class DataGuru extends javax.swing.JPanel {
             BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252,
                     BaseFont.NOT_EMBEDDED);
 
-            cb.beginText();
+             cb.beginText();
             cb.setFontAndSize(bf, 11);
 
+
             cb.setColorFill(BaseColor.WHITE);
-
+            
             float yPos = 52;
-
+            
             cb.showTextAligned(
                     Element.ALIGN_CENTER,
                     nama,
@@ -414,6 +415,7 @@ public class DataGuru extends javax.swing.JPanel {
                     yPos, // posisi bawah
                     0
             );
+
 
             cb.endText();
             doc.close();
@@ -441,6 +443,7 @@ public class DataGuru extends javax.swing.JPanel {
         gd.insert(g);
         loadData();
         resetForm();
+
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
@@ -455,6 +458,9 @@ public class DataGuru extends javax.swing.JPanel {
 
         loadData();
         resetForm();
+        fNip.setEditable(true);
+
+
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
@@ -471,24 +477,29 @@ public class DataGuru extends javax.swing.JPanel {
         gd.delete(g);
         loadData();
         resetForm();
+        fNip.setEditable(true);
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void tbDataGuruMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataGuruMouseClicked
         // TODO add your handling code here:
         int barisYangDipilih = tbDataGuru.rowAtPoint(evt.getPoint());
 
+        // Pastikan baris valid
         if (barisYangDipilih >= 0) {
+            // Ambil data dari tabel secara aman
             idGuruTerpilih = Integer.parseInt(tbDataGuru.getValueAt(barisYangDipilih, 0).toString());
             Object nipObj = tbDataGuru.getValueAt(barisYangDipilih, 1);
             Object namaObj = tbDataGuru.getValueAt(barisYangDipilih, 2);
             Object jkObj = tbDataGuru.getValueAt(barisYangDipilih, 3);
             Object alamatObj = tbDataGuru.getValueAt(barisYangDipilih, 4);
 
+            // Hindari NullPointerException
             String NIP = (nipObj != null) ? nipObj.toString() : "";
             String namaGuru = (namaObj != null) ? namaObj.toString() : "";
             String jenisKelamin = (jkObj != null) ? jkObj.toString() : "";
             String alamat = (alamatObj != null) ? alamatObj.toString() : "";
 
+            // Set nilai ke form
             fNip.setText(NIP);
             fNip.setEditable(false);
             fNama.setText(namaGuru);

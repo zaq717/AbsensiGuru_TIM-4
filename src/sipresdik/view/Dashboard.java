@@ -2,10 +2,6 @@ package sipresdik.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIManager;
-import sipresdik.dao.DasboardDao;
-import java.sql.SQLException;
-import javax.swing.JOptionPane;
-
 
 /**
  *
@@ -23,27 +19,6 @@ public class Dashboard extends javax.swing.JPanel {
             System.err.println("FlatLaf Error");
         }
         initComponents();
-        loadData();
-    }
-
-    private void loadData() {
-        DasboardDao ds = new DasboardDao();
-        try {
-            
-            int total = ds.totalGuru();
-            int hadir = ds.hadir();
-            int tidak = ds.tidakHadir();
-
-          
-            Dtotalguru.setText(String.valueOf(total));
-            Dhadir.setText(String.valueOf(hadir));
-            Dtidakhadir.setText(String.valueOf(tidak));
-
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Gagal mengambil data dashboard:\n" + ex.getMessage(),
-                    "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     /**
@@ -62,17 +37,17 @@ public class Dashboard extends javax.swing.JPanel {
         barAtasTotalGuru = new javax.swing.JPanel();
         lbTotalGuru = new javax.swing.JLabel();
         pnUtamaTotalGuru = new javax.swing.JPanel();
-        Dtotalguru = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         pnDasarTidakHadir = new javax.swing.JPanel();
         barAtasTidakHadir = new javax.swing.JPanel();
         barTidakHadir = new javax.swing.JLabel();
         pnUtamaTidakHadir = new javax.swing.JPanel();
-        Dtidakhadir = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         pnDasarHadir = new javax.swing.JPanel();
         barAtasHadir = new javax.swing.JPanel();
         lbHadir = new javax.swing.JLabel();
         pnUtamaHadir = new javax.swing.JPanel();
-        Dhadir = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -126,9 +101,9 @@ public class Dashboard extends javax.swing.JPanel {
 
         pnUtamaTotalGuru.setBackground(new java.awt.Color(255, 255, 255));
 
-        Dtotalguru.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        Dtotalguru.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        Dtotalguru.setText("15");
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("15");
 
         javax.swing.GroupLayout pnUtamaTotalGuruLayout = new javax.swing.GroupLayout(pnUtamaTotalGuru);
         pnUtamaTotalGuru.setLayout(pnUtamaTotalGuruLayout);
@@ -136,14 +111,14 @@ public class Dashboard extends javax.swing.JPanel {
             pnUtamaTotalGuruLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnUtamaTotalGuruLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Dtotalguru, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnUtamaTotalGuruLayout.setVerticalGroup(
             pnUtamaTotalGuruLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnUtamaTotalGuruLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Dtotalguru, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -178,9 +153,9 @@ public class Dashboard extends javax.swing.JPanel {
 
         pnUtamaTidakHadir.setBackground(new java.awt.Color(255, 255, 255));
 
-        Dtidakhadir.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        Dtidakhadir.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        Dtidakhadir.setText("5");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("5");
 
         javax.swing.GroupLayout pnUtamaTidakHadirLayout = new javax.swing.GroupLayout(pnUtamaTidakHadir);
         pnUtamaTidakHadir.setLayout(pnUtamaTidakHadirLayout);
@@ -188,14 +163,14 @@ public class Dashboard extends javax.swing.JPanel {
             pnUtamaTidakHadirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnUtamaTidakHadirLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Dtidakhadir, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnUtamaTidakHadirLayout.setVerticalGroup(
             pnUtamaTidakHadirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnUtamaTidakHadirLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Dtidakhadir, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -229,9 +204,9 @@ public class Dashboard extends javax.swing.JPanel {
 
         pnUtamaHadir.setBackground(new java.awt.Color(255, 255, 255));
 
-        Dhadir.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        Dhadir.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        Dhadir.setText("10");
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("10");
 
         javax.swing.GroupLayout pnUtamaHadirLayout = new javax.swing.GroupLayout(pnUtamaHadir);
         pnUtamaHadir.setLayout(pnUtamaHadirLayout);
@@ -239,14 +214,14 @@ public class Dashboard extends javax.swing.JPanel {
             pnUtamaHadirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnUtamaHadirLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Dhadir, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnUtamaHadirLayout.setVerticalGroup(
             pnUtamaHadirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnUtamaHadirLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Dhadir, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -281,14 +256,14 @@ public class Dashboard extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Dhadir;
-    private javax.swing.JLabel Dtidakhadir;
-    private javax.swing.JLabel Dtotalguru;
     private javax.swing.JPanel barAtas;
     private javax.swing.JPanel barAtasHadir;
     private javax.swing.JPanel barAtasTidakHadir;
     private javax.swing.JPanel barAtasTotalGuru;
     private javax.swing.JLabel barTidakHadir;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel lbDashboard;
     private javax.swing.JLabel lbHadir;
     private javax.swing.JLabel lbTotalGuru;
@@ -300,5 +275,4 @@ public class Dashboard extends javax.swing.JPanel {
     private javax.swing.JPanel pnUtamaTidakHadir;
     private javax.swing.JPanel pnUtamaTotalGuru;
     // End of variables declaration//GEN-END:variables
-
 }

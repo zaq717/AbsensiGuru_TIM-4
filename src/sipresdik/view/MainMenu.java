@@ -86,7 +86,7 @@ public class MainMenu extends javax.swing.JFrame {
 
         lbFuelin.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lbFuelin.setForeground(new java.awt.Color(255, 255, 255));
-        lbFuelin.setText("Presensi");
+        lbFuelin.setText("Absensi");
 
         pnDashboard.setBackground(new java.awt.Color(16, 185, 129));
 
@@ -131,7 +131,7 @@ public class MainMenu extends javax.swing.JFrame {
         btnAbsensi.setBackground(new java.awt.Color(255, 255, 255));
         btnAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnAbsensi.setForeground(new java.awt.Color(255, 255, 255));
-        btnAbsensi.setText("Presensi");
+        btnAbsensi.setText("Absensi");
         btnAbsensi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnAbsensiMouseClicked(evt);
@@ -169,7 +169,7 @@ public class MainMenu extends javax.swing.JFrame {
         btnRekapAbsensi.setBackground(new java.awt.Color(255, 255, 255));
         btnRekapAbsensi.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnRekapAbsensi.setForeground(new java.awt.Color(255, 255, 255));
-        btnRekapAbsensi.setText("Rekap Presensi");
+        btnRekapAbsensi.setText("Rekap Absensi");
         btnRekapAbsensi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnRekapAbsensiMouseClicked(evt);
@@ -627,10 +627,10 @@ public class MainMenu extends javax.swing.JFrame {
     ==============================
                      About Absensi Guru
     ==============================
-Nama Aplikasi     :  SIPRESDIK (Sistem Presensi Pendidik)
+Nama Aplikasi     : ABSENSI GURU MI NURUL HUDA III
 Versi                    : 1.0.0
 Dibuat oleh         : TIM 4 SI 2024 INSTITUT TEKNOLOGI MOJOSARI
-Tanggal Rilis        : 16 Desember 2025
+Tanggal Rilis        : 01 Oktober 2025
 
 Deskripsi:
 
@@ -659,9 +659,12 @@ Terima kasih....!
                 "Konfirmasi Keluar", JOptionPane.YES_NO_OPTION);
 
         if (response == JOptionPane.YES_OPTION) {
-            new FormLogin().setVisible(true);
+            // Jika Yes, kembali ke login
+//            new FormLogin().setVisible(true);
             dispose(); // Menutup jendela saat ini
         } else if (response == JOptionPane.NO_OPTION) {
+            // Jika No, kembali ke menu terakhir yang dibuka 
+            // Misalnya, membuka kembali JFrame menu terakhir
             this.setVisible(true); // Menampilkan kembali menu yang sedang aktif
         }
     }//GEN-LAST:event_btnLogoutMouseClicked
