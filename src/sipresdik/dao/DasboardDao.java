@@ -1,6 +1,6 @@
-package absensiguru.dao;
+package sipresdik.dao;
 
-import presensiguru.helper.Koneksi;
+import sipresdik.helper.Koneksi;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

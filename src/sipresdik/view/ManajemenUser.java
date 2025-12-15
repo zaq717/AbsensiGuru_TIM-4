@@ -1,7 +1,7 @@
-package presensiguru.view;
+package sipresdik.view;
 
-import absensiguru.dao.ManajemenDao;
-import presensiguru.model.ManajemenModel;
+import sipresdik.dao.ManajemenDao;
+import sipresdik.model.ManajemenModel;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;

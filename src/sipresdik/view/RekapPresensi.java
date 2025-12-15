@@ -1,6 +1,6 @@
-package presensiguru.view;
+package sipresdik.view;
 
-import absensiguru.dao.RekapPresensiDao;
+import sipresdik.dao.RekapPresensiDao;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 

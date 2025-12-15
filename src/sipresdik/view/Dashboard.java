@@ -1,8 +1,8 @@
-package presensiguru.view;
+package sipresdik.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIManager;
-import absensiguru.dao.DasboardDao;
+import sipresdik.dao.DasboardDao;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
