@@ -1,12 +1,12 @@
-package absensiguru.view;
+package sipresdik.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import absensiguru.dao.GuruDao;
+import sipresdik.dao.GuruDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import absensiguru.model.GuruModel;
+import sipresdik.model.GuruModel;
 import java.io.File; // Java IO
 import java.io.FileOutputStream;
 
@@ -19,7 +19,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.BaseFont;
 
-import absensiguru.dao.QRGenerator; // ZXing QR Generator
+import sipresdik.dao.QRGenerator; // ZXing QR Generator
 import com.itextpdf.text.BaseColor;
 
 /**

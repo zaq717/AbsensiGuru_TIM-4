@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package absensiguru.dao;
+package sipresdik.dao;
 
-import absensiguru.helper.Koneksi;
-import absensiguru.model.GuruModel;
+import sipresdik.helper.Koneksi;
+import sipresdik.model.GuruModel;
 import java.sql.*;
 import javax.swing.JOptionPane;
 

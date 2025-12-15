@@ -1,4 +1,4 @@
-package absensiguru.helper;
+package sipresdik.helper;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

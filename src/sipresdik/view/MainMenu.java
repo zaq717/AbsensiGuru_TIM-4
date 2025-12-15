@@ -1,4 +1,4 @@
-package absensiguru.view;
+package sipresdik.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
@@ -576,7 +576,7 @@ public class MainMenu extends javax.swing.JFrame {
     private void btnAbsensiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAbsensiMouseClicked
         pnAbsensi.setBackground(new Color(12, 175, 121));
         pnUtama.removeAll();
-        pnUtama.add(new Absensi());
+        pnUtama.add(new Presensi());
         pnUtama.repaint();
         pnUtama.revalidate();
     }//GEN-LAST:event_btnAbsensiMouseClicked
@@ -592,7 +592,7 @@ public class MainMenu extends javax.swing.JFrame {
     private void btnRekapAbsensiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRekapAbsensiMouseClicked
         pnRekapAbsensi.setBackground(new Color(12, 175, 121));
         pnUtama.removeAll();
-        pnUtama.add(new RekapAbsensi());
+        pnUtama.add(new RekapPresensi());
         pnUtama.repaint();
         pnUtama.revalidate();
     }//GEN-LAST:event_btnRekapAbsensiMouseClicked

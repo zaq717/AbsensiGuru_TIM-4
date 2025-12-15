@@ -1,4 +1,4 @@
-package absensiguru.view;
+package sipresdik.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIManager;
@@ -7,12 +7,12 @@ import javax.swing.UIManager;
  *
  * @author HP
  */
-public class Absensi extends javax.swing.JPanel {
+public class Presensi extends javax.swing.JPanel {
 
     /**
      * Creates new form Dashboard
      */
-    public Absensi() {
+    public Presensi() {
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
         } catch (Exception ex) {
