@@ -103,8 +103,8 @@ public class PresensiDao extends Koneksi {
             //aturan waktu absen
             LocalTime waktuSekarang = LocalTime.now(ZoneId.of("Asia/Jakarta"));//local time waktu jakarta (WIB).
             LocalTime jamAwalMasuk = LocalTime.of(07, 00, 00);
-            LocalTime jamAkhirMasuk = LocalTime.of(10, 43, 59);
-            LocalTime jamMulaiPulang = LocalTime.of(10, 44, 00);
+            LocalTime jamAkhirMasuk = LocalTime.of(10, 29, 59);
+            LocalTime jamMulaiPulang = LocalTime.of(10, 30, 00);
             //cek apakah sudah absen hari ini
             boolean sudahAbsen = CekAbsenHariIni(idGuru);
             //absen masuk
