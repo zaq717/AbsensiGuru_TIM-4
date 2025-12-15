@@ -1,6 +1,6 @@
-package absensiguru.view;
+package sipresdik.view;
 
-import absensiguru.dao.LoginDao;
+import sipresdik.dao.LoginDao;
 import javax.swing.JOptionPane;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
