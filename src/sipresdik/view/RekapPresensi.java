@@ -1,6 +1,6 @@
-package absensiguru.view;
+package sipresdik.view;
 
-import absensiguru.dao.RekapAbsensiDao;
+import sipresdik.dao.RekapPresensiDao;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -8,14 +8,14 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author HP
  */
-public class RekapAbsensi extends javax.swing.JPanel {
+public class RekapPresensi extends javax.swing.JPanel {
 
-    RekapAbsensiDao dao = new RekapAbsensiDao();
+    RekapPresensiDao dao = new RekapPresensiDao();
 
     /**
      * Creates new form Dashboard
      */
-    public RekapAbsensi() {
+    public RekapPresensi() {
         initComponents();
         loadTahun();
         loadGuru();
@@ -24,7 +24,7 @@ public class RekapAbsensi extends javax.swing.JPanel {
     }
 
     public void loadRekap() {
-        RekapAbsensiDao dao = new RekapAbsensiDao();
+        RekapPresensiDao dao = new RekapPresensiDao();
 
         String bulan = cbBulan.getSelectedItem().toString();
         String tahun = cbTahun.getSelectedItem().toString();
@@ -52,7 +52,7 @@ public class RekapAbsensi extends javax.swing.JPanel {
     }
 
     private void loadTahun() {
-        RekapAbsensiDao dao = new RekapAbsensiDao();
+        RekapPresensiDao dao = new RekapPresensiDao();
         DefaultTableModel modelTahun = dao.getComboTahun();
 
         cbTahun.removeAllItems();
@@ -64,7 +64,7 @@ public class RekapAbsensi extends javax.swing.JPanel {
     }
 
     private void loadGuru() {
-        RekapAbsensiDao dao = new RekapAbsensiDao();
+        RekapPresensiDao dao = new RekapPresensiDao();
         DefaultTableModel modelGuru = dao.getComboGuru();
 
         cbGuru.removeAllItems();
@@ -279,7 +279,7 @@ public class RekapAbsensi extends javax.swing.JPanel {
         }
 
         // 5. Membuat objek DAO
-        RekapAbsensiDao dao = new RekapAbsensiDao();
+        RekapPresensiDao dao = new RekapPresensiDao();
 
         // 6. Eksekusi cetak PDF
         try {

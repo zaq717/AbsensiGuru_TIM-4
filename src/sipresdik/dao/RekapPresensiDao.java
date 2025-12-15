@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package absensiguru.dao;
+package sipresdik.dao;
 
-import absensiguru.helper.Koneksi;
+import sipresdik.helper.Koneksi;
 import java.sql.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -17,11 +17,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import java.net.URL;
 
-public class RekapAbsensiDao {
+public class RekapPresensiDao {
 
     private Connection conn;
 
-    public RekapAbsensiDao() {
+    public RekapPresensiDao() {
         conn = Koneksi.konek();
     }
 
